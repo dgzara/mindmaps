@@ -24,7 +24,8 @@ mindmaps.Document = function() {
  * @returns {mindmaps.Document}
  */
 mindmaps.Document.fromJSON = function(json) {
-  return mindmaps.Document.fromObject(JSON.parse(json))
+  json = JSON.stringify(json);
+  return mindmaps.Document.fromObject(JSON.parse(json));
 };
 
 /**
