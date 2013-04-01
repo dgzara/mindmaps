@@ -21,6 +21,7 @@ html,body {
   height: 100%; /* needed for container min-height */
   font-family: sans-serif;
   font-size: 10px; /*conform with jquery-ui em settings */
+  background-color: yellow;
 }
 
 #container {
@@ -36,20 +37,17 @@ html,body {
 }
 
 .logo-bg {
-  background: #31A1DF; /* Old browsers */
+  background: #000;
+  /*
+  background: #31A1DF; 
   background: -moz-linear-gradient(left, #31A1DF 7%, #e5e5e5 100%);
-  /* FF3.6+ */
   background: -webkit-gradient(linear, left top, right top, color-stop(7%, #31A1DF),
-    color-stop(100%, #e5e5e5) ); /* Chrome,Safari4+ */
+    color-stop(100%, #e5e5e5) ); 
   background: -webkit-linear-gradient(left, #31A1DF 7%, #e5e5e5 100%);
-  /* Chrome10+,Safari5.1+ */
   background: -o-linear-gradient(left, #31A1DF 7%, #e5e5e5 100%);
-  /* Opera11.10+ */
   background: -ms-linear-gradient(left, #31A1DF 7%, #e5e5e5 100%);
-  /* IE10+ */
   filter: progid : DXImageTransform.Microsoft.gradient (startColorstr = '#31A1DF', endColorstr = '#E5E5E5', GradientType = 1 );
-  /* IE6-9 */
-  background: linear-gradient(left, #31A1DF 7%, #e5e5e5 100%); /* W3C */
+  background: linear-gradient(left, #31A1DF 7%, #e5e5e5 100%);*/
 }
 
 .rotate-180 {
@@ -77,7 +75,7 @@ html,body {
   float: left;
   width: 170px;
   height: 40px;
-  background-color: #AFC8F0;
+  background-color: #000;
   margin-right: 10px;
   color: white;
   font-size: 3em;
@@ -88,7 +86,7 @@ html,body {
 }
 
 #toolbar {
-  background-color: #E5E5E5;
+  background-color: #000;
   overflow: hidden;
   width: 100%;
 }
@@ -190,8 +188,8 @@ html,body {
 
 #drawing-area {
   position: absolute;
-  background-color: white;
-  background-image: url("../img/grid.gif");
+  background-color: yellow;
+  /*background-image: url("../img/grid.gif");
   background-size: 24px 24px;
   /* need this for webkit as well. */
   image-rendering: -moz-crisp-edges;
@@ -209,7 +207,7 @@ html,body {
 }
 
 .mindmap .root.node-container {
-  border-bottom: 10px solid transparent;
+  /*border-bottom: 10px solid transparent;*/
   width: 1px;
   height: 20px;
   left: 50%;
@@ -226,39 +224,40 @@ html,body {
 }
 
 .mindmap .node-caption:hover {
-  border: 2px dotted #DDD;
+  /*border: 2px dotted #DDD;*/
   padding: 2px;
 }
 
 .mindmap .node-caption.selected {
-  border: 2px solid red;
+  /*border: 2px solid red;*/
   padding: 2px;
   z-index: 1000;
-  webkit-box-shadow: 3px 3px 7px #828282;
+  /*webkit-box-shadow: 3px 3px 7px #828282;
   -moz-box-shadow: 3px 3px 7px #828282;
-  box-shadow: 3px 3px 7px #828282;
+  box-shadow: 3px 3px 7px #828282;*/
 }
 
 .mindmap .node-caption.edit {
-  border: 2px solid blue;
+  /*border: 2px solid blue;*/
 }
 
 .mindmap .node-caption.root {
   cursor: default;
-  background: white;
-  border: 3px solid orange;
-  border-radius: 10px 10px 10px 10px;
   left: -50px;
   position: absolute;
-  padding: 4px;
+  padding: 100px;
+  background-image: url("../img/paint-splash-4.gif");
+  background-repeat: no-repeat;
+  background-size: 80%;
+  background-position:center;  
 }
 
 .mindmap .node-caption.root.selected {
-  border-color: red;
+  /*border-color: red;*/
 }
 
 .mindmap .node-caption.root.edit {
-  border-color: blue;
+  /*border-color: blue;*/
 }
 
 .mindmap .button-fold {

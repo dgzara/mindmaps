@@ -15,17 +15,17 @@ mindmaps.ZoomController = function(eventBus, commandRegistry) {
   /**
    * @constant
    */
-  this.MAX_ZOOM = 3;
+  this.MAX_ZOOM = 4;
 
   /**
    * @constant
    */
-  this.MIN_ZOOM = 0.25;
+  this.MIN_ZOOM = 0.5;
 
   /**
    * @constant
    */
-  this.DEFAULT_ZOOM = 1;
+  this.DEFAULT_ZOOM = 0.75;
 
   /**
    * @private

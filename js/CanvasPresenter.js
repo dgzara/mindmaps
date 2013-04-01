@@ -91,7 +91,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    * @ignore
    */
   view.nodeMouseOver = function(node) {
-    if (view.isNodeDragging() || creator.isDragging()) {
+    if (view.isNodeDragging() || creator.isDragging() || edicion == false) {
       // dont relocate the creator if we are dragging
     } else {
       creator.attachToNode(node);
@@ -104,7 +104,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    * @ignore
    */
   view.nodeCaptionMouseOver = function(node) {
-    if (view.isNodeDragging() || creator.isDragging()) {
+    if (view.isNodeDragging() || creator.isDragging() || edicion == false) {
       // dont relocate the creator if we are dragging
     } else {
       creator.attachToNode(node);
@@ -119,7 +119,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
   view.nodeMouseDown = function(node) {
     mindmapModel.selectNode(node);
     // show creator
-    creator.attachToNode(node);
+    //creator.attachToNode(node);
   };
 
   // view.nodeMouseUp = function(node) {

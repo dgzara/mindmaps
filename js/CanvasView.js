@@ -179,13 +179,14 @@ mindmaps.DefaultCanvasView = function() {
 
   function drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent,
       color) {
-    var canvas = $canvas[0];
+    
+    /* var canvas = $canvas[0];
     var ctx = canvas.getContext("2d");
 
     // set $canvas for beforeDraw() callback.
     branchDrawer.$canvas = $canvas;
     branchDrawer.render(ctx, depth, offsetX, offsetY, $node, $parent,
-        color, self.zoomFactor);
+        color, self.zoomFactor); */
   }
 
   this.init = function() {
@@ -328,7 +329,7 @@ mindmaps.DefaultCanvasView = function() {
 
     if (node.isRoot()) {
       var w = this.getLineWidth(depth);
-      $node.css("border-bottom-width", w);
+      //$node.css("border-bottom-width", w);
     }
 
     if (!node.isRoot()) {
@@ -340,7 +341,7 @@ mindmaps.DefaultCanvasView = function() {
       $node.css({
         left : this.zoomFactor * offsetX,
         top : this.zoomFactor * offsetY,
-        "border-bottom" : bb
+        //"border-bottom" : bb
       });
 
       // node drag behaviour
@@ -632,7 +633,7 @@ mindmaps.DefaultCanvasView = function() {
    */
   this.updateBranchColor = function(node, color) {
     var $node = $getNode(node);
-    $node.css("border-bottom-color", color);
+    //$node.css("border-bottom-color", color);
     
     // redraw canvas to parent
     if (!node.isRoot()) {
@@ -701,7 +702,7 @@ mindmaps.DefaultCanvasView = function() {
     var root = $root.data("node");
 
     var w = this.getLineWidth(0);
-    $root.css("border-bottom-width", w);
+    //$root.css("border-bottom-width", w);
 
     // handle root differently
     var $text = $getNodeCaption(root);
@@ -709,6 +710,8 @@ mindmaps.DefaultCanvasView = function() {
     $text.css(
         {
           "font-size" : zoomFactor * 100 + "%",
+          "padding": zoomFactor * 120,
+          "background-size": zoomFactor * 80 + "%",
           "left" : zoomFactor
               * -mindmaps.TextMetrics.ROOT_CAPTION_MIN_WIDTH / 2
         }).css(metrics);
@@ -726,7 +729,7 @@ mindmaps.DefaultCanvasView = function() {
       $node.css({
         left : zoomFactor * node.offset.x,
         top : zoomFactor * node.offset.y,
-        "border-bottom-width" : bWidth
+        //"border-bottom-width" : bWidth
       });
 
       var $text = $getNodeCaption(node);
@@ -962,7 +965,7 @@ mindmaps.DefaultCanvasView = function() {
       // set border on our fake node for correct line drawing
       this.depth = node.getDepth();
       var w = view.getLineWidth(this.depth + 1);
-      $fakeNode.css("border-bottom-width", w);
+      //$fakeNode.css("border-bottom-width", w);
 
       var $node = $getNode(node);
       $wrapper.appendTo($node);

@@ -9,8 +9,6 @@ mindmaps.ApplicationController = function() {
   var commandRegistry = new mindmaps.CommandRegistry(shortcutController);
   var undoController = new mindmaps.UndoController(eventBus, commandRegistry);
   var mindmapModel = new mindmaps.MindMapModel(eventBus, commandRegistry, undoController);
-  var clipboardController = new mindmaps.ClipboardController(eventBus,
-      commandRegistry, mindmapModel);
   var helpController = new mindmaps.HelpController(eventBus, commandRegistry);
   var printController = new mindmaps.PrintController(eventBus,
       commandRegistry, mindmapModel);

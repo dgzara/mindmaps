@@ -273,18 +273,9 @@ mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view,
   var undoButtons = commandsToButtons(undoCommands);
   view.addButtonGroup(undoButtons, view.alignLeft);
 
-  // clipboard buttons.
-  var clipboardCommands = [ mindmaps.CopyNodeCommand,
-      mindmaps.CutNodeCommand, mindmaps.PasteNodeCommand ];
-  var clipboardButtons = commandsToButtons(clipboardCommands);
-  view.addButtonGroup(clipboardButtons, view.alignLeft);
-
   // file menu
-  var fileMenu = new mindmaps.ToolBarMenu("Mind map", "ui-icon-document");
-  var fileCommands = [ mindmaps.NewDocumentCommand,
-      mindmaps.OpenDocumentCommand, mindmaps.SaveDocumentCommand,
-      mindmaps.ExportCommand, mindmaps.PrintCommand,
-      mindmaps.CloseDocumentCommand ];
+  var fileMenu = new mindmaps.ToolBarMenu("Opciones", "ui-icon-document");
+  var fileCommands = [mindmaps.ExportCommand, mindmaps.PrintCommand];
   var fileButtons = commandsToButtons(fileCommands);
   fileMenu.add(fileButtons);
   view.addMenu(fileMenu);

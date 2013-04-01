@@ -40,7 +40,7 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
           {
             position : "bottomMiddle",
             maxWidth : 550,
-            title : "Welcome to mindmaps",
+            title : "Bienvenido a artifica",
             content : "Hello there, it seems like you are new here! These bubbles "
                 + "will guide you through the app. Or they won't if you want to skip this tutorial and <a class='skip-tutorial link'>click here<a/>."
           });
@@ -233,9 +233,9 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
             position : "bottomLeft",
             closeButton : true,
             maxWidth : 350,
-            title : "This is your main idea",
-            content : "Double click an idea to edit its text. Move the mouse over "
-                + "an idea and drag the red circle to create a new idea."
+            title : "Aquí empieza el curso",
+            content : "Desde aquí surgen las distintas áreas que investigaremos "
+                + "en este curso."
           });
 
       var helpNavigator = new mindmaps.Notification(
@@ -245,9 +245,9 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
             closeButton : true,
             maxWidth : 350,
             padding : 20,
-            title : "This is the navigator",
-            content : "Use this panel to get an overview of your map. "
-                + "You can navigate around by dragging the red rectangle or change the zoom by clicking on the magnifier buttons."
+            title : "Este es el navegador",
+            content : "Usa este panel para visualizar el mapa."
+                + "Puedes navegar alrededor de él, arrastrando el rectángulo rojo o cambiando el zoom haciendo click en las lupas."
           });
 
       var helpInspector = new mindmaps.Notification(
@@ -268,9 +268,9 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
             position : "bottomLeft",
             closeButton : true,
             maxWidth : 350,
-            title : "This is your toolbar",
-            content : "Those buttons do what they say. You can use them or work with keyboard shortcuts. "
-                + "Hover over the buttons for the key combinations."
+            title : "Esta es la barra de herramientas",
+            content : "Estas son las opciones disponibles en el mapa. Puedes agregar o eliminar nodos, deshacer o rehacer acciones."
+                + "Y guardar el mapa como una imagen."
           });
 
       notifications.push(helpRoot, helpNavigator, helpInspector,
