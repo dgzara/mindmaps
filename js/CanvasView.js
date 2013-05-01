@@ -710,8 +710,6 @@ mindmaps.DefaultCanvasView = function() {
     $text.css(
         {
           "font-size" : zoomFactor * 100 + "%",
-          "padding": zoomFactor * 120,
-          "background-size": zoomFactor * 80 + "%",
           "left" : zoomFactor
               * -mindmaps.TextMetrics.ROOT_CAPTION_MIN_WIDTH / 2
         }).css(metrics);

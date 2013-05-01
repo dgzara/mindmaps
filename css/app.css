@@ -245,11 +245,7 @@ html,body {
   cursor: default;
   left: -50px;
   position: absolute;
-  padding: 100px;
-  background-image: url("../img/paint-splash-4.gif");
-  background-repeat: no-repeat;
-  background-size: 80%;
-  background-position:center;  
+  padding: 4px;
 }
 
 .mindmap .node-caption.root.selected {
