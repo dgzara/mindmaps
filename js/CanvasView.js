@@ -143,7 +143,17 @@ mindmaps.DefaultCanvasView = function() {
 
   var textMetrics = mindmaps.TextMetrics;
   var branchDrawer = new mindmaps.CanvasBranchDrawer();
+  var imageDrawer = new mindmaps.CanvasImageDrawer();
   branchDrawer.beforeDraw = function(width, height, left, top) {
+    this.$canvas.attr({
+      width : width,
+      height : height
+    }).css({
+      left : left,
+      top : top
+    });
+  };
+  imageDrawer.beforeDraw = function(width, height, left, top) {
     this.$canvas.attr({
       width : width,
       height : height
@@ -187,6 +197,17 @@ mindmaps.DefaultCanvasView = function() {
     branchDrawer.$canvas = $canvas;
     branchDrawer.render(ctx, depth, offsetX, offsetY, $node, $parent,
         color, self.zoomFactor); */
+  }
+  
+  function drawImageCanvas($canvas, depth, offsetX, offsetY, $node, image,
+      color) {
+    
+    var canvas = $canvas[0];
+    var ctx = canvas.getContext("2d");
+
+    // set $canvas for beforeDraw() callback.
+    imageDrawer.$canvas = $canvas;
+    imageDrawer.render(ctx, depth, offsetX, offsetY, $node, image, color, self.zoomFactor);
   }
 
   this.init = function() {
@@ -363,10 +384,10 @@ mindmaps.DefaultCanvasView = function() {
             var offsetX = ui.position.left / self.zoomFactor;
             var offsetY = ui.position.top / self.zoomFactor;
             var color = node.branchColor;
+            var image = node.image;
             var $canvas = $getNodeCanvas(node);
-
-            drawLineCanvas($canvas, depth, offsetX, offsetY, $node,
-                $parent, color);
+			
+            drawImageCanvas($canvas, depth, offsetX, offsetY, $node, image, color);
 
             // fire dragging event
             if (self.nodeDragging) {
@@ -599,13 +620,15 @@ mindmaps.DefaultCanvasView = function() {
     var depth = node.getDepth();
     var offsetX = node.offset.x;
     var offsetY = node.offset.y;
+    var image = node.image;
     color = color || node.branchColor;
 
     var $node = $getNode(node);
     var $parent = $getNode(parent);
     var $canvas = $getNodeCanvas(node);
-
-    drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent, color);
+	
+	drawImageCanvas($canvas, depth, offsetX, offsetY, $node, image, color);
+    //drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent, color);
   }
 
   /**

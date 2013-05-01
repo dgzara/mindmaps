@@ -305,3 +305,56 @@ mindmaps.TextMetrics = (function() {
     }
   };
 })();
+
+/**
+ * Object that draws the background image from the node onto a
+ * canvas object.
+ * 
+ * @constructor
+ */
+mindmaps.CanvasImageDrawer = function() {
+  /**
+   * Callback during render() method. Is called after calculating the
+   * boundaries of the line and before actual drawing.
+   * 
+   * @event
+   */
+  this.beforeDraw = function(width, height, left, top) {
+
+  };
+
+  /**
+   * Render that.
+   * 
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {Integer} depth
+   * @param {Number} offsetX
+   * @param {Number} offsetY
+   * @param {jQuery} $node
+   * @param {String} color
+   * @param {Number} zoomFactor
+   */
+  this.render = function(ctx, depth, offsetX, offsetY, $node, image, color, zoomFactor) {
+
+    offsetX = offsetX * zoomFactor;
+    offsetY = offsetY * zoomFactor;
+
+    var nw = $node.width();
+    var nih = $node.innerHeight();
+    var img = new Image();
+    
+    width = 300;
+    height = 300;
+    left = 0;
+    top = 0;
+    
+    // fire before draw event
+    this.beforeDraw(width, height, left, top);
+    
+    img.src = 'http://www.artifica.com/img/' + image;
+    img.onload = function(){
+		ctx.drawImage(img, left, top);
+    }
+  };
+};
+
