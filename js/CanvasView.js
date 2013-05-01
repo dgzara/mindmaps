@@ -168,7 +168,15 @@ mindmaps.DefaultCanvasView = function() {
   function $getNodeCanvas(node) {
     return $("#node-canvas-" + node.id);
   }
-
+  
+  function $getNodeSvg(node) {
+    return $("#node-svg-" + node.id);
+  }
+  
+  function $getNodeSvgImage(node) {
+    return $("#node-svg-image-" + node.id);  
+  }
+  
   function $getNode(node) {
     return $("#node-" + node.id);
   }
@@ -189,9 +197,26 @@ mindmaps.DefaultCanvasView = function() {
         color, self.zoomFactor); */
   }
   
-  function drawImageCanvas($canvas, depth, offsetX, offsetY, $node, image,
+  function drawImageSvg($svg, $svgImage, depth, offsetX, offsetY, $node,
       color) {
-
+	  
+	  // draw svg if node is not a root
+	  var svg = $svg[0];
+	  svg.setAttribute('height', 200 * self.zoomFactor);    
+	  svg.setAttribute('width', 200 * self.zoomFactor);
+      
+      // Generate the image
+      var svgImage = $svgImage[0];
+	  svgImage.setAttribute('x','0');    
+	  svgImage.setAttribute('y','0');
+	  svgImage.setAttribute('height', 200 * self.zoomFactor);  
+	  svgImage.setAttribute('width', 200 * self.zoomFactor);  
+      
+      $svg.css({
+        "position" : "relative",
+        "left" : "-" + 50 * self.zoomFactor + "px",    
+        "top" : "-" + 50 * self.zoomFactor + "px",
+      });  
   }
 
   this.init = function() {
@@ -369,9 +394,10 @@ mindmaps.DefaultCanvasView = function() {
             var offsetY = ui.position.top / self.zoomFactor;
             var color = node.branchColor;
             var image = node.image;
-            var $canvas = $getNodeCanvas(node);
+            var $svg = $getNodeSvg(node);
+            var $svgImage = $getNodeSvgImage(node);
 			
-            drawImageCanvas($canvas, depth, offsetX, offsetY, $node, image, color);
+            drawImageSvg($svg, $svgImage, depth, offsetX, offsetY, $node, color);
 
             // fire dragging event
             if (self.nodeDragging) {
@@ -428,26 +454,28 @@ mindmaps.DefaultCanvasView = function() {
       // draw svg if node is not a root	
       var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
 	  svg.setAttribute('id', 'node-svg-' + node.id);
-	  svg.setAttribute('height','60');  
-	  svg.setAttribute('width','60');
+	  svg.setAttribute('height','200');  
+	  svg.setAttribute('width','200');
 	  svg.setAttribute('xmlns','http://www.w3.org/2000/svg');  
 	  svg.setAttribute('xmlns:xlink','http://www.w3.org/1999/xlink');
       
+      // Generate the image
       var svgimg = document.createElementNS('http://www.w3.org/2000/svg','image');
+	  svgimg.setAttribute('id', 'node-svg-image-' + node.id);  
 	  svgimg.setAttribute('x','0');  
 	  svgimg.setAttribute('y','0');
-	  svgimg.setAttribute('height','60');  
-	  svgimg.setAttribute('width','60');
-	  svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', 'http://www.artifica.com/img/opera.svg')
+	  svgimg.setAttribute('height','200');  
+	  svgimg.setAttribute('width','200');  
+	  svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', 'http://www.artifica.com/img/' + node.image)
       
-      var svgcircle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-	  svgcircle.setAttribute('cx','30');  
-	  svgcircle.setAttribute('cy','30');
-	  svgcircle.setAttribute('r','30');
-	  svgcircle.setAttribute('fill','green');
-        
       svg.appendChild(svgimg);    
-      $node.append(svg);  
+      $node.append(svg); 
+      
+      $("#node-svg-" + node.id).css({
+        "position" : "relative",
+        "left" : "-50px",  
+        "top" : "-50px",
+      });
     }
 
     if (node.isRoot()) {
@@ -622,10 +650,10 @@ mindmaps.DefaultCanvasView = function() {
 
     var $node = $getNode(node);
     var $parent = $getNode(parent);
-    var $canvas = $getNodeCanvas(node);
+    var $svg = $getNodeSvg(node);
+    var $svgImage = $getNodeSvgImage(node);
 	
-	drawImageCanvas($canvas, depth, offsetX, offsetY, $node, image, color);
-    //drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent, color);
+	drawImageSvg($svg, $svgImage, depth, offsetX, offsetY, $node, color);
   }
 
   /**
