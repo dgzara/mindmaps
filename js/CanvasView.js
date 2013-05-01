@@ -143,17 +143,7 @@ mindmaps.DefaultCanvasView = function() {
 
   var textMetrics = mindmaps.TextMetrics;
   var branchDrawer = new mindmaps.CanvasBranchDrawer();
-  var imageDrawer = new mindmaps.CanvasImageDrawer();
   branchDrawer.beforeDraw = function(width, height, left, top) {
-    this.$canvas.attr({
-      width : width,
-      height : height
-    }).css({
-      left : left,
-      top : top
-    });
-  };
-  imageDrawer.beforeDraw = function(width, height, left, top) {
     this.$canvas.attr({
       width : width,
       height : height
@@ -201,13 +191,7 @@ mindmaps.DefaultCanvasView = function() {
   
   function drawImageCanvas($canvas, depth, offsetX, offsetY, $node, image,
       color) {
-    
-    var canvas = $canvas[0];
-    var ctx = canvas.getContext("2d");
 
-    // set $canvas for beforeDraw() callback.
-    imageDrawer.$canvas = $canvas;
-    imageDrawer.render(ctx, depth, offsetX, offsetY, $node, image, color, self.zoomFactor);
   }
 
   this.init = function() {
@@ -440,17 +424,30 @@ mindmaps.DefaultCanvasView = function() {
       } else {
         $node.show();
       }
-
-      // draw canvas to parent if node is not a root
-      var $canvas = $("<canvas/>", {
-        id : "node-canvas-" + node.id,
-        "class" : "line-canvas"
-      });
-
-      // position and draw connection
-      drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent,
-          node.branchColor);
-      $canvas.appendTo($node);
+      
+      // draw svg if node is not a root	
+      var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+	  svg.setAttribute('id', 'node-svg-' + node.id);
+	  svg.setAttribute('height','60');  
+	  svg.setAttribute('width','60');
+	  svg.setAttribute('xmlns','http://www.w3.org/2000/svg');  
+	  svg.setAttribute('xmlns:xlink','http://www.w3.org/1999/xlink');
+      
+      var svgimg = document.createElementNS('http://www.w3.org/2000/svg','image');
+	  svgimg.setAttribute('x','0');  
+	  svgimg.setAttribute('y','0');
+	  svgimg.setAttribute('height','60');  
+	  svgimg.setAttribute('width','60');
+	  svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', 'http://www.artifica.com/img/opera.svg')
+      
+      var svgcircle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+	  svgcircle.setAttribute('cx','30');  
+	  svgcircle.setAttribute('cy','30');
+	  svgcircle.setAttribute('r','30');
+	  svgcircle.setAttribute('fill','green');
+        
+      svg.appendChild(svgimg);    
+      $node.append(svg);  
     }
 
     if (node.isRoot()) {
