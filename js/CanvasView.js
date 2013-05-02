@@ -185,38 +185,33 @@ mindmaps.DefaultCanvasView = function() {
     return $("#node-caption-" + node.id);
   }
 
-  function drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent,
-      color) {
-    
-    /* var canvas = $canvas[0];
-    var ctx = canvas.getContext("2d");
-
-    // set $canvas for beforeDraw() callback.
-    branchDrawer.$canvas = $canvas;
-    branchDrawer.render(ctx, depth, offsetX, offsetY, $node, $parent,
-        color, self.zoomFactor); */
-  }
-  
-  function drawImageSvg($svg, $svgImage, depth, offsetX, offsetY, $node,
-      color) {
+  function drawImageSvg($node, $svg, $svgImage, $text, sizeX, sizeY, left, top) {
 	  
 	  // draw svg if node is not a root
 	  var svg = $svg[0];
-	  svg.setAttribute('height', 200 * self.zoomFactor);    
-	  svg.setAttribute('width', 200 * self.zoomFactor);
+	  svg.setAttribute('height', sizeY * self.zoomFactor);    
+	  svg.setAttribute('width', sizeX * self.zoomFactor);
       
       // Generate the image
-      var svgImage = $svgImage[0];
+      var svgImage = $svgImage[0];  
 	  svgImage.setAttribute('x','0');    
 	  svgImage.setAttribute('y','0');
-	  svgImage.setAttribute('height', 200 * self.zoomFactor);  
-	  svgImage.setAttribute('width', 200 * self.zoomFactor);  
+	  svgImage.setAttribute('height', sizeY * self.zoomFactor);  
+	  svgImage.setAttribute('width', sizeX * self.zoomFactor);  
       
       $svg.css({
         "position" : "relative",
-        "left" : "-" + 50 * self.zoomFactor + "px",    
-        "top" : "-" + 50 * self.zoomFactor + "px",
-      });  
+        "left" : self.zoomFactor * left,
+	    "top" : self.zoomFactor * top,   
+      });
+      
+      // Reajustamos el tamaño del div
+      if($text){
+		  $node.css({  
+			  height: $text.height(),
+			  width: $text.width(),  
+		  });
+      }   
   }
 
   this.init = function() {
@@ -358,7 +353,7 @@ mindmaps.DefaultCanvasView = function() {
     $node.appendTo($parent);
 
     if (node.isRoot()) {
-      var w = this.getLineWidth(depth);
+      //var w = this.getLineWidth(depth);
       //$node.css("border-bottom-width", w);
     }
 
@@ -390,14 +385,14 @@ mindmaps.DefaultCanvasView = function() {
           },
           drag : function(e, ui) {
             // reposition and draw canvas while dragging
-            var offsetX = ui.position.left / self.zoomFactor;
-            var offsetY = ui.position.top / self.zoomFactor;
-            var color = node.branchColor;
-            var image = node.image;
+            var sizeX = node.size.x;
+            var sizeY = node.size.y;
+            var left = node.left;
+            var top = node.top;
             var $svg = $getNodeSvg(node);
             var $svgImage = $getNodeSvgImage(node);
 			
-            drawImageSvg($svg, $svgImage, depth, offsetX, offsetY, $node, color);
+            drawImageSvg($node, $svg, $svgImage, null, sizeX, sizeY, left, top);
 
             // fire dragging event
             if (self.nodeDragging) {
@@ -416,7 +411,7 @@ mindmaps.DefaultCanvasView = function() {
             }
           }
         });
-      });
+      });  
     }
 
     // text caption
@@ -450,38 +445,46 @@ mindmaps.DefaultCanvasView = function() {
       } else {
         $node.show();
       }
-      
-      // draw svg if node is not a root	
-      var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-	  svg.setAttribute('id', 'node-svg-' + node.id);
-	  svg.setAttribute('height','200');  
-	  svg.setAttribute('width','200');
-	  svg.setAttribute('xmlns','http://www.w3.org/2000/svg');  
-	  svg.setAttribute('xmlns:xlink','http://www.w3.org/1999/xlink');
-      
-      // Generate the image
-      var svgimg = document.createElementNS('http://www.w3.org/2000/svg','image');
-	  svgimg.setAttribute('id', 'node-svg-image-' + node.id);  
-	  svgimg.setAttribute('x','0');  
-	  svgimg.setAttribute('y','0');
-	  svgimg.setAttribute('height','200');  
-	  svgimg.setAttribute('width','200');  
-	  svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', 'http://www.artifica.com/img/' + node.image)
-      
-      svg.appendChild(svgimg);    
-      $node.append(svg); 
-      
-      $("#node-svg-" + node.id).css({
-        "position" : "relative",
-        "left" : "-50px",  
-        "top" : "-50px",
-      });
     }
 
     if (node.isRoot()) {
       $node.children().andSelf().addClass("root");
+      $text.hide();  
     }
+	
+	// draw svg for the root	
+	var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+	svg.setAttribute('id', 'node-svg-' + node.id);
+	svg.setAttribute('height', this.zoomFactor * node.size.y);  
+	svg.setAttribute('width', this.zoomFactor * node.size.x);
+	svg.setAttribute('xmlns','http://www.w3.org/2000/svg');  
+	svg.setAttribute('xmlns:xlink','http://www.w3.org/1999/xlink');
 
+	// Generate the image
+	var svgimg = document.createElementNS('http://www.w3.org/2000/svg','image');
+	svgimg.setAttribute('id', 'node-svg-image-' + node.id);  
+	svgimg.setAttribute('x','0');  
+	svgimg.setAttribute('y','0');
+	svgimg.setAttribute('height', this.zoomFactor * node.size.y);   
+	svgimg.setAttribute('width', this.zoomFactor * node.size.x); 
+	svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', 'http://www.artifica.com/img/' + node.image);
+
+	svg.appendChild(svgimg);      
+	$node.append(svg);   
+
+	// Reajustamos la posición del svg
+	$("#node-svg-" + node.id).css({
+	  "position" : "relative",
+	  left : this.zoomFactor * node.left,
+	  top : this.zoomFactor * node.top,     
+	});
+    
+    // Reajustamos el tamaño del div
+    $node.css({
+    	height: $text.height(),
+    	width: $text.width(),
+    });
+    
     // draw child nodes
     node.forEachChild(function(child) {
       self.createNode(child, $node, depth + 1);
@@ -641,19 +644,17 @@ mindmaps.DefaultCanvasView = function() {
    * @param {String} optional color
    */
   function drawNodeCanvas(node, color) {
-    var parent = node.getParent();
-    var depth = node.getDepth();
-    var offsetX = node.offset.x;
-    var offsetY = node.offset.y;
-    var image = node.image;
-    color = color || node.branchColor;
-
+    var sizeX = node.size.x;  
+    var sizeY = node.size.y;
+    var left = node.left;
+    var top = node.top;
+	
     var $node = $getNode(node);
-    var $parent = $getNode(parent);
     var $svg = $getNodeSvg(node);
     var $svgImage = $getNodeSvgImage(node);
+	var $text = $getNodeCaption(node);
 	
-	drawImageSvg($svg, $svgImage, depth, offsetX, offsetY, $node, color);
+	drawImageSvg($node, $svg, $svgImage, $text, sizeX, sizeY, left, top);
   }
 
   /**
@@ -731,7 +732,7 @@ mindmaps.DefaultCanvasView = function() {
   this.positionNode = function(node) {
     var $node = $getNode(node);
     // TODO try animate
-    // position
+    // position  
     $node.css({
       left : this.zoomFactor * node.offset.x,
       top : this.zoomFactor * node.offset.y
@@ -761,7 +762,10 @@ mindmaps.DefaultCanvasView = function() {
           "left" : zoomFactor
               * -mindmaps.TextMetrics.ROOT_CAPTION_MIN_WIDTH / 2
         }).css(metrics);
-
+	
+	// change root's size
+    drawNodeCanvas(root);
+        
     root.forEachChild(function(child) {
       scale(child, 1);
     });
@@ -956,14 +960,6 @@ mindmaps.DefaultCanvasView = function() {
         }
       },
       drag : function(e, ui) {
-        // update creator canvas
-        var offsetX = ui.position.left / view.zoomFactor;
-        var offsetY = ui.position.top / view.zoomFactor;
-
-        // set depth+1 because we are drawing the canvas for the child
-        var $node = $getNode(self.node);
-        drawLineCanvas($canvas, self.depth + 1, offsetX, offsetY,
-            $fakeNode, $node, self.lineColor);
       },
       stop : function(e, ui) {
         dragging = false;

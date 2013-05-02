@@ -84,6 +84,7 @@ html,body {
   overflow: hidden;
   padding-top: 3px;
   text-shadow: 2px 1px 5px #1C4257;
+  font-family: 'MyriadPro-Semibold', sans-serif;
 }
 
 #toolbar {
