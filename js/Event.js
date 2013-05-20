@@ -102,6 +102,18 @@ mindmaps.Event = {
    */
   NODE_CLOSED : "NodeClosedEvent",
 
+	/**
+	 * @event
+	 * @param {mindmaps.Node} node
+	 */
+	NODE_WINDOW_OPENED : "NodeWindowOpenedEvent",
+
+	/**
+	 * @event
+	 * @param {mindmaps.Node} node
+	 */
+	NODE_WINDOW_CLOSED : "NodeWindowClosedEvent",
+
   /**
    * @event
    * @param {Number} zoomFactor

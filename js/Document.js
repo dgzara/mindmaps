@@ -5,7 +5,7 @@
  */
 mindmaps.Document = function() {
   this.id = mindmaps.Util.createUUID();
-  this.title = "New Document";
+  this.title = "Nuevo Documento";
   this.mindmap = new mindmaps.MindMap();
   this.dates = {
     created : new Date(),

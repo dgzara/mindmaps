@@ -431,6 +431,11 @@ mindmaps.DefaultCanvasView = function() {
     var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
     $text.css(metrics);
 
+	// Delete botton
+    if(!node.isRoot() && edicion){
+        //this.createDeleteButton(node);
+    }
+
     // create fold button for parent if he hasn't one already
     var parentAlreadyHasFoldButton = $parent.data("foldButton");
     var nodeOrParentIsRoot = node.isRoot() || parent.isRoot();
@@ -550,6 +555,49 @@ mindmaps.DefaultCanvasView = function() {
 
     var $foldButton = $node.children(".button-fold").first();
     $foldButton.removeClass("closed").addClass("open");
+  };
+
+   /**
+	* Shows a node
+	* 
+	* @param {mindmaps.Node} node
+	*/
+   this.openNodeWindow = function(node) {
+		    
+    // Vemos si tiene padre
+    var padre_id = null;
+    if(node.parent){
+        padre_id = node.parent.id;
+    }
+    
+    // Seteamos el dialog en la ventana
+    var $test = $("#template-open").tmpl().appendTo("#ventana");
+
+    // Creamos el elemento
+    var dialog = new Dialog(self, node);
+    $("#open-dialog").html('<div id="nodo"></div><img id="loader_nodo" src="/bundles/artificamapa/img/ajax-loader.gif" style="vertical-align: middle; display: none" alt ="loading"/>');
+    $("#open-dialog").ready(function(){
+        dialog.open();
+    });
+    
+    // Cargamos el nodo
+    $('#loader_nodo').show();  
+    $('#nodo').hide();
+    $("#nodo").load(
+        $('#form_nodo').attr('action'),
+        {
+            nodo_id: node.id,
+            nodo_padre_id: padre_id,
+            nodo_x: node.offset.x,
+            nodo_y: node.offset.y,
+            edicion: edicion,
+        },
+        function() {
+            $('#loader_nodo').hide();
+            $('#nodo').show();
+            dialog.newPosition();
+        }
+    );
   };
 
   /**
@@ -740,6 +788,9 @@ mindmaps.DefaultCanvasView = function() {
 
     // redraw canvas to parent
     drawNodeCanvas(node);
+    
+    // Send the changes to the database
+    //moveNode(node.id, this.zoomFactor * node.offset.x, this.zoomFactor * node.offset.y);
   };
 
   /**
@@ -1030,6 +1081,44 @@ mindmaps.DefaultCanvasView = function() {
       return dragging;
     };
   }
+
+	/**
+	 * Creates a new Dialog. This tool is used to see a new window.
+	 * 
+	 * @constructor
+	 * @param {mindmaps.CanvasView} view
+	 * @returns {Creator}
+	 */
+	function Dialog(view, node) {
+        var x = 'center';
+        var y = document.body.clientHeight / 3;
+        this.dialog = $("#ventana").dialog({
+            position: [x, y],
+            autoOpen : false,
+            modal : true,
+            zIndex : 5000,
+            width : 700,
+            close : function() {
+                    node.text.caption = $('#node-caption-'+node.id).val();
+                    $(this).dialog("destroy");
+                    $(this).empty();
+                    view.nodeCloseWindow(node);
+            }
+        });
+        
+        this.open = function(){
+            this.dialog.dialog("open");
+        }
+        
+        this.close = function(){
+            node.text.caption = $('#node-caption-'+node.id).val();
+            this.dialog.dialog("close");
+        }
+        
+        this.newPosition = function(){
+            this.dialog.dialog('option', 'position', [x, y]);
+        }
+    }
 };
 
 // inherit from base canvas view

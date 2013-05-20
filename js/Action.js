@@ -207,6 +207,34 @@ mindmaps.action.CloseNodeAction = function(node) {
 };
 mindmaps.action.CloseNodeAction.prototype = new mindmaps.action.Action();
 
+
+/**
+ * Creates a new OpenNodeWindowAction.
+ * 
+ * @constructor
+ * @augments mindmaps.action.Action
+ * @param {mindmaps.Node} node
+ */
+mindmaps.action.OpenNodeWindowAction = function(node) {
+	this.event = [ mindmaps.Event.NODE_WINDOW_OPENED, node ];
+
+};
+mindmaps.action.OpenNodeWindowAction.prototype = new mindmaps.action.Action();
+
+/**
+ * Creates a new CloseNodeAction.
+ * 
+ * @constructor
+ * @augments mindmaps.action.Action
+ * @param {mindmaps.Node} node
+ */
+mindmaps.action.CloseNodeWindowAction = function(node) {
+	this.event = [ mindmaps.Event.NODE_WINDOW_CLOSED, node ];
+
+};
+mindmaps.action.CloseNodeWindowAction.prototype = new mindmaps.action.Action();
+
+
 /**
  * Creates a new ChangeNodeCaptionAction.
  * 

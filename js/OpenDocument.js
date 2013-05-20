@@ -12,7 +12,7 @@ mindmaps.OpenDocumentView = function() {
     autoOpen : false,
     modal : true,
     zIndex : 5000,
-    width : 550,
+    width : 700,
     close : function() {
       $(this).dialog("destroy");
       $(this).remove();

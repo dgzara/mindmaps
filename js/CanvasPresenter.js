@@ -131,7 +131,9 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    * @ignore
    */
   view.nodeDoubleClicked = function(node) {
-    view.editNodeCaption(node);
+	   view.openNodeWindow(node, view);
+       mindmapModel.openWindowNode(node);
+    // view.editNodeCaption(node);
   };
 
   // view.nodeDragging = function() {
@@ -147,7 +149,11 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 
     // update model
     var action = new mindmaps.action.MoveNodeAction(node, offset);
-    mindmapModel.executeAction(action);
+    
+	// Guardamos las posiciones en la BD
+    moverNodo(node.id, offset.x, offset.y);
+	
+	mindmapModel.executeAction(action);
   };
 
   /**
@@ -189,7 +195,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
     node.branchColor = creator.lineColor;
     node.offset = new mindmaps.Point(offsetX, offsetY);
     // indicate that we want to set this nodes caption after creation
-    node.shouldEditCaption = true;
+    node.shouldEditCaption = false;
 
     mindmapModel.createNode(node, parent);
   };
@@ -212,6 +218,10 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
     view.stopEditNodeCaption();
     mindmapModel.changeNodeCaption(node, str);
   };
+
+  view.nodeCloseWindow = function(node){
+  	mindmapModel.closeWindowNode(node);
+  }
 
   this.go = function() {
     view.init();

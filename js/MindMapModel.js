@@ -168,6 +168,71 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry, undoController) {
     this.executeAction(action);
   };
 
+
+/**
+	 * Open a node or for the selected one if node
+	 * is null.
+	 * 
+	 * @param {mindmaps.Node} node
+	 */
+	this.openNode = function(node) {
+		if (!node) {
+			node = this.selectedNode;
+		}
+
+		var action = new mindmaps.action.OpenNodeAction(node);
+		this.executeAction(action);
+	};
+        
+        
+        /**
+	 * Close a node or for the selected one if node
+	 * is null.
+	 * 
+	 * @param {mindmaps.Node} node
+	 */
+	this.closeNode = function(node) {
+		if (!node) {
+			node = this.selectedNode;
+		}
+
+		var action = new mindmaps.action.CloseNodeAction(node);
+		this.executeAction(action);
+	};
+
+
+        /**
+	 * Open a node or for the selected one if node
+	 * is null.
+	 * 
+	 * @param {mindmaps.Node} node
+	 */
+	this.openWindowNode = function(node) {
+		if (!node) {
+			node = this.selectedNode;
+		}
+
+		var action = new mindmaps.action.OpenNodeWindowAction(node);
+		this.executeAction(action);
+	};
+        
+        
+        /**
+	 * Close a node or for the selected one if node
+	 * is null.
+	 * 
+	 * @param {mindmaps.Node} node
+	 */
+	this.closeWindowNode = function(node) {
+		if (!node) {
+			node = this.selectedNode;
+		}
+
+		var action = new mindmaps.action.CloseNodeWindowAction(node);
+		this.executeAction(action);
+	};
+
+
   /**
    * Executes a node action. An executed action might raise an event over the
    * event bus and cause an undo event to be emitted via
