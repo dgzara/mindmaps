@@ -206,170 +206,48 @@ function limitChars(input, limit, infodiv)
     }
 }
 
-function reestablecerOpciones(){
-    // Restablecemos los colores
-    $('.tabs li').each(function(index){
-        $(this).css("background-color","#dbdbdb");
-    });
-    
-    // Ocultamos las opciones
-    $('.opciones').hide();
-}
-
-function mostrarYoutube(medio){
-    
-    this.reestablecerOpciones();
-     
-    // Establecemos dentro del formulario la opcion seleccionada
-    document.getElementById('medio_' + medio + '_opcion').value= 'youtube';
-     
-    // Cambiamos el color de los tabs
-    $('#buscar_youtube_tab').css("background-color","#eee");
-
-    // Mostramos la selección
-    $('#medio_youtube').show();
-}
- 
-function mostrarArchivo(medio){
-     
-    this.reestablecerOpciones();
-     
-    document.getElementById('medio_' + medio + '_opcion').value= 'archivo';
-
-    // Cambiamos el color de los tabs
-    $('#subir_tab').css("background-color","#eee");
-
-    $('#medio_archivo').show();
-}
- 
-function mostrarVimeo(medio){
-     
-    this.reestablecerOpciones();
-     
-    document.getElementById('medio_' + medio + '_opcion').value= 'vimeo';
-     
-    // Cambiamos el color de los tabs
-    $('#buscar_vimeo_tab').css("background-color","#eee");
-
-    $('#vimeo').show();
-}
- 
-function mostrarSoundCloud(medio){
-     
-    this.reestablecerOpciones();
-     
-    document.getElementById('medio_' + medio + '_opcion').value= 'soundcloud';
-     
-    // Cambiamos el color de los tabs
-    $('#buscar_soundcloud_tab').css("background-color","#eee");
-
-    $('#medio_soundcloud').show();
-}
- 
-function mostrarCodigo(medio){
-     
-    this.reestablecerOpciones();
-     
-    document.getElementById('medio_' + medio + '_opcion').value= 'codigo';
-     
-    // Cambiamos el color de los tabs
-    $('#integrar_tab').css("background-color","#eee");
-
-    $('#medio_codigo').show();
-}
- 
-function mostrarGoogle(medio){
-     
-    this.reestablecerOpciones();
-     
-    document.getElementById('medio_' + medio + '_opcion').value= 'google';
-     
-    // Cambiamos el color de los tabs
-    $('#buscar_google_tab').css("background-color","#eee");
-
-    $('#medio_google').show();
-}
-
-function buscarImagen(event){
-    if(event && event.which == 13){
-        SearchGoogleImages($('#busqueda_google').val());
-        return false;
-        
-    }  
-    else{
-        return true;
-    }
-}
-
-function buscarYoutube(event){
-    if(event && event.which == 13){
-        ytVideoApp.listVideos($('#queryType').val(), $('#busqueda_youtube').val(), 1);
-        return false;
-        
-    }  
-    else{
-        return true;
-    }
-}
-
-
-function ajaxFileUpload(url_upload, medio, folder, nodo_id)
+function ajaxFileUpload(url_upload)
 {
-    $("#loading")
-    .ajaxStart(function(){
-        $(this).show();
-    })
-    .ajaxComplete(function(){
-        $(this).hide();
-    });
-    
-    $.ajaxFileUpload
-    (
+    $.ajaxFileUpload(
     {
         url: url_upload,
-        secureuri:false,
-        fileElementId:'fileToUpload',
+        secureuri: false,
+        fileElementId: 'fileToUpload',
         dataType: 'json',
-        data:{
-            name:'logan', 
-            id: nodo_id
-        },
         success: function (data, status)
         {
             if(typeof(data.error) != 'undefined')
             {
                 if(data.error != '')
-                {
+                {	
+                	alert('estamos casi');
                     alert(data.error);
-                }else
+                }
+                else
                 {
-                    // alert(data.msg);
+                	alert('estamos al debe');
                     $('#fileToUpload').attr('disabled', 'disabled');
                     $('#buttonUpload').attr('disabled', 'disabled');
                     $('#upload_file').hide();
-                    $('#medio_'+medio+'_fuente').val(data.name);
+                    $('#medio_'+medio+'_fuente').val(data.nombre);
                     
-                    if(medio == 'imagen'){
+                    if(data.medio == 'imagen'){
                         // Visor de imagen
-                        $('#upload_message').html('<img src="../../../uploads/'+folder+'/'+data.name+'">');
+                        $('#upload_message').html('<img src="../../../uploads/'+folder+'/'+data.nombre+'">');
                         document.getElementById('medio_' + medio + '_opcion').value= 'archivo';
                     }
-                    else if(medio == 'sonido'){
+                    else if(data.medio == 'sonido'){
                         // Reproductor de sonido
-                        $('#upload_message').html('<audio src="../../../uploads/'+folder+'/'+data.name+'" controls="controls"></audio>');
+                        $('#upload_message').html('<audio src="../../../uploads/'+folder+'/'+data.nombre+'" controls="controls"></audio>');
                         document.getElementById('medio_' + medio + '_opcion').value= 'archivo';
                     }
-                    else if(medio == 'video'){
-                    // Reproductor de video
-                        
-                    }
-//                    $('#medio_'+medio).submit();
                 }
             }
         },
         error: function (data, status, e)
         {
-            alert(e);
+            alert(data.responseText);
+            //alert(e);
         }
     }
     )
