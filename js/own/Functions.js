@@ -173,17 +173,28 @@ function editarMedio(url){
     });
 }
 
+/* 
+ * Cambia los tabas
+ */
+function cambiarTab(url)
+{
+	$(".tab-pane").removeClass("active");
+	$(".tabs li").removeClass("active");
+	$(url).addClass("active");
+	$('a[href$="'+url+'"]').closest("li").addClass("active");
+}
+
 /*
  * Limita en un campo de texto el máximo de carácteres a ingresar
  */
-function limitChars(textid, limit, infodiv)
+function limitChars(input, limit, infodiv)
 {
-    var text = $('#'+textid).val();	
+    var text = input.val();	
     var textlength = text.length;
     if(textlength >= limit)
     {
         $('#' + infodiv).html('No puedes escribir más de '+limit+' caracteres');
-        $('#'+textid).val(text.substr(0,limit));
+        input.val(text.substr(0,limit));
         $('input[type="submit"]').attr("disabled", true);
         return false;
     }

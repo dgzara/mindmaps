@@ -1,0 +1,19 @@
+
+.tab-content .tab-pane{
+	display: none;
+}
+
+.tab-content .active{
+	display: block;
+}
+
+.tabs li {
+	background-color:#dbdbdb; 
+	color:#555;
+}
+
+.tabs .active {
+	background-color:#eee;
+}
+
+
