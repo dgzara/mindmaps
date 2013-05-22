@@ -208,6 +208,9 @@ function limitChars(input, limit, infodiv)
 
 function ajaxFileUpload(url_upload)
 {
+	$('#upload_file').hide();
+	$('#loading').show();
+    			
     $.ajaxFileUpload(
     {
         url: url_upload,
@@ -220,26 +223,25 @@ function ajaxFileUpload(url_upload)
             {
                 if(data.error != '')
                 {	
-                	alert('estamos casi');
                     alert(data.error);
                 }
                 else
                 {
-                	alert('estamos al debe');
+                	$('#loading').hide();
                     $('#fileToUpload').attr('disabled', 'disabled');
                     $('#buttonUpload').attr('disabled', 'disabled');
                     $('#upload_file').hide();
-                    $('#medio_'+medio+'_fuente').val(data.nombre);
+                    $('#loading').hide();
+                    
+                    // Copiamos los valores
+                    $('#artifica_mapabundle_mediotype_opcion').val('archivo');
+                    $('#artifica_mapabundle_mediotype_codigo').val(data.direccion);
                     
                     if(data.medio == 'imagen'){
-                        // Visor de imagen
-                        $('#upload_message').html('<img src="../../../uploads/'+folder+'/'+data.nombre+'">');
-                        document.getElementById('medio_' + medio + '_opcion').value= 'archivo';
+                        $('#upload_message').html('<img src="'+ data.direccion +'?rand='+Math.floor((Math.random()*1000)+1)+'">');
                     }
                     else if(data.medio == 'sonido'){
-                        // Reproductor de sonido
-                        $('#upload_message').html('<audio src="../../../uploads/'+folder+'/'+data.nombre+'" controls="controls"></audio>');
-                        document.getElementById('medio_' + medio + '_opcion').value= 'archivo';
+                    	$('#upload_message').html('<embed type="application/x-shockwave-flash" src="http://www.google.com/reader/ui/3523697345-audio-player.swf" flashvars="audioUrl='+data.direccion+'" width="500" height="27" quality="best"></embed>');
                     }
                 }
             }
