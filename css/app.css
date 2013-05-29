@@ -142,8 +142,6 @@ html,body {
   position: fixed; /* absolute caused scroll bar, depending on border */
   width: 100%;
   bottom: 0;
-  background: #EEE;
-  border-top: 1px solid #AAA;
 }
 
 #statusbar {

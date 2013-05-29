@@ -23,7 +23,8 @@ mindmaps.CanvasContainer = function() {
     var windowHeight = $(window).height();
     var headerHeight = $("#topbar").outerHeight(true);
     var footerHeight = $("#bottombar").outerHeight(true);
-    var height = windowHeight - headerHeight - footerHeight;
+    var height = windowHeight - headerHeight;
+    //var height = windowHeight - headerHeight - footerHeight;
     $content.height(height);
 
     var size = new mindmaps.Point($content.width(), height);

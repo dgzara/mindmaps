@@ -91,7 +91,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    * @ignore
    */
   view.nodeMouseOver = function(node) {
-    if (view.isNodeDragging() || creator.isDragging() || edicion == false) {
+    if (view.isNodeDragging() || creator.isDragging() || edicion == false || node.text.caption == 'Nuevo concepto' || node.text.caption == 'Idea central') {
       // dont relocate the creator if we are dragging
     } else {
       creator.attachToNode(node);
@@ -104,7 +104,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    * @ignore
    */
   view.nodeCaptionMouseOver = function(node) {
-    if (view.isNodeDragging() || creator.isDragging() || edicion == false) {
+    if (view.isNodeDragging() || creator.isDragging() || edicion == false || node.text.caption == 'Nuevo concepto' || node.text.caption == 'Idea central') {
       // dont relocate the creator if we are dragging
     } else {
       creator.attachToNode(node);
