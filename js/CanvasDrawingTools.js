@@ -258,17 +258,17 @@ mindmaps.TextMetrics = (function() {
     /**
      * @constant
      */
-    ROOT_CAPTION_MIN_WIDTH : 100,
+    ROOT_CAPTION_MIN_WIDTH : 150,
 
     /**
      * @constant
      */
-    NODE_CAPTION_MIN_WIDTH : 70,
+    NODE_CAPTION_MIN_WIDTH : 10,
 
     /**
      * @constant
      */
-    NODE_CAPTION_MAX_WIDTH : 150,
+    NODE_CAPTION_MAX_WIDTH : 55,
 
     /**
      * Calculates the width and height a node would have to provide to show
@@ -282,9 +282,18 @@ mindmaps.TextMetrics = (function() {
       zoomFactor = zoomFactor || 1;
       text = text || node.getCaption();
       var font = node.text.font;
-      var minWidth = node.isRoot() ? this.ROOT_CAPTION_MIN_WIDTH
-          : this.NODE_CAPTION_MIN_WIDTH;
       var maxWidth = this.NODE_CAPTION_MAX_WIDTH;
+	  if(node.isRoot()){
+	  	var minWidth = this.ROOT_CAPTION_MIN_WIDTH;
+	  }
+	  else{
+	  	if(node.getParent().isRoot()){
+	  		var minWidth = this.ROOT_CAPTION_MIN_WIDTH;
+	  	}
+	  	else{
+	  		var minWidth = this.NODE_CAPTION_MIN_WIDTH;
+	  	}
+	  }
 
       $div.css({
         "font-size" : zoomFactor * font.size,
@@ -299,8 +308,8 @@ mindmaps.TextMetrics = (function() {
       var h = $div.height() + 2;
 
       return {
-        width : w,
-        height : h
+        "max-width": w,
+        "max-height" : h
       };
     }
   };

@@ -209,7 +209,7 @@ mindmaps.DefaultCanvasView = function() {
       if($text){
 		  $node.css({  
 			  height: $text.height(),
-			  width: $text.width(),  
+			  // width: $text.width(),  
 		  });
       }   
   }
@@ -432,7 +432,8 @@ mindmaps.DefaultCanvasView = function() {
       "font-size" : this.zoomFactor * 100 + "%",
       "font-weight" : font.weight,
       "font-style" : font.style,
-      "text-decoration" : font.decoration
+      "text-decoration" : font.decoration,
+      "word-wrap": "break-word"
     }).appendTo($node);
 
     var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
@@ -494,7 +495,7 @@ mindmaps.DefaultCanvasView = function() {
     // Reajustamos el tamaño del div
     $node.css({
     	height: $text.height(),
-    	width: $text.width(),
+    	// width: $text.width(),
     });
     
     // draw child nodes
