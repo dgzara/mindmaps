@@ -340,7 +340,11 @@ mindmaps.DefaultCanvasView = function() {
     var depth = depth || node.getDepth();
     var offsetX = node.offset.x;
     var offsetY = node.offset.y;
-
+	
+	if(depth){
+		node.text.font.size = 120/Math.pow(3, depth);
+	}
+	
     // div node container
     var $node = $("<div/>", {
       id : "node-" + node.id,
@@ -348,7 +352,7 @@ mindmaps.DefaultCanvasView = function() {
     }).data({
       node : node
     }).css({
-      "font-size" : node.text.font.size
+      "font-size" : node.text.font.size,
     });
     $node.appendTo($parent);
 
@@ -419,6 +423,7 @@ mindmaps.DefaultCanvasView = function() {
 	// Definimos el color de los nodos
 	if(parent && !parent.isRoot()){
 		node.text.font.color = parent.text.font.color;
+		node.text.font.size = parent.text.font.size;
 	}
 	
 	// text caption
@@ -463,6 +468,15 @@ mindmaps.DefaultCanvasView = function() {
     if (node.isRoot()) {
       $node.children().andSelf().addClass("root");
       $text.hide();  
+    }
+    
+    if(node.size.x == ''){
+    	node.size.x = $text.outerWidth();
+    }
+    
+    if(node.size.y == ''){
+    	node.size.y = $text.outerWidth();
+    	node.top = -($text.outerWidth())/2;
     }
 	
 	// draw svg for the root	

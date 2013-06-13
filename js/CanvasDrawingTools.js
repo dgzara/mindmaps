@@ -258,7 +258,7 @@ mindmaps.TextMetrics = (function() {
     /**
      * @constant
      */
-    ROOT_CAPTION_MIN_WIDTH : 150,
+    ROOT_CAPTION_MIN_WIDTH : 200,
 
     /**
      * @constant
@@ -268,7 +268,7 @@ mindmaps.TextMetrics = (function() {
     /**
      * @constant
      */
-    NODE_CAPTION_MAX_WIDTH : 55,
+    NODE_CAPTION_MAX_WIDTH : 120,
 
     /**
      * Calculates the width and height a node would have to provide to show
