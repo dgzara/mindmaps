@@ -441,8 +441,15 @@ mindmaps.DefaultCanvasView = function() {
       "word-wrap": "break-word"
     }).appendTo($node);
 
-    var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
-    $text.css(metrics);
+	if(depth != 1){
+    	var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
+    	$text.css(metrics);
+    }
+    else{
+    	$text.css({
+    		"text-align": "left",
+    	});
+    }
 
 	// Delete botton
     if(!node.isRoot() && edicion){
@@ -471,12 +478,28 @@ mindmaps.DefaultCanvasView = function() {
     }
     
     if(node.size.x == ''){
-    	node.size.x = $text.outerWidth();
+    	if(depth == 1){
+    		node.size.x = 2 * $text.outerWidth();
+    		node.left = -$text.outerWidth()/6;
+    	}
+    	else{
+	    	node.size.x = $text.outerWidth();
+    	}
     }
     
     if(node.size.y == ''){
-    	node.size.y = $text.outerWidth();
-    	node.top = -($text.outerWidth())/2;
+    	if(depth == 1){
+    		node.size.y = 2 * $text.outerWidth();
+    		node.top = - 1.2*$text.outerWidth();
+    	}
+    	else if(depth < 4){
+    		node.size.y = $text.outerWidth();
+    		node.top = - 0.6*$text.outerWidth();
+    	}
+    	else{
+    		node.size.y = $text.outerHeight();
+    		node.top = - 2*$text.outerHeight()/3;
+    	}
     }
 	
 	// draw svg for the root	
@@ -492,8 +515,8 @@ mindmaps.DefaultCanvasView = function() {
 	svgimg.setAttribute('id', 'node-svg-image-' + node.id);  
 	svgimg.setAttribute('x','0');  
 	svgimg.setAttribute('y','0');
-	svgimg.setAttribute('height', this.zoomFactor * node.size.y);   
-	svgimg.setAttribute('width', this.zoomFactor * node.size.x); 
+	svgimg.setAttribute('height', this.zoomFactor * node.size.y);  
+	svgimg.setAttribute('width', this.zoomFactor * node.size.x);
 	svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', 'http://www.artifica.com/img/' + node.image);
 
 	svg.appendChild(svgimg);      
