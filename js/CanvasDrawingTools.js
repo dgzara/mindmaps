@@ -74,7 +74,7 @@ mindmaps.CanvasBranchDrawer = function() {
    */
   this.render = function(ctx, depth, offsetX, offsetY, $node, $parent, color,
       zoomFactor) {
-
+	
     offsetX = offsetX * zoomFactor;
     offsetY = offsetY * zoomFactor;
 

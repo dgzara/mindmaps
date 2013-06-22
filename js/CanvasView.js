@@ -185,30 +185,36 @@ mindmaps.DefaultCanvasView = function() {
     return $("#node-caption-" + node.id);
   }
 
-  function drawImageSvg($node, $svg, $svgImage, $text, sizeX, sizeY, left, top) {
+  function drawImageSvg(node) {
 	  
+    var $node = $getNode(node);
+    var $svg = $getNodeSvg(node);
+    var $svgImage = $getNodeSvgImage(node);
+	var $text = $getNodeCaption(node);
+	var depth = node.getDepth();
+    
 	  // draw svg if node is not a root
 	  var svg = $svg[0];
-	  svg.setAttribute('height', sizeY * self.zoomFactor);    
-	  svg.setAttribute('width', sizeX * self.zoomFactor);
+	  svg.setAttribute('height', node.size.y * self.zoomFactor);    
+	  svg.setAttribute('width', node.size.x * self.zoomFactor);
       
       // Generate the image
       var svgImage = $svgImage[0];  
 	  svgImage.setAttribute('x','0');    
 	  svgImage.setAttribute('y','0');
-	  svgImage.setAttribute('height', sizeY * self.zoomFactor);  
-	  svgImage.setAttribute('width', sizeX * self.zoomFactor);  
+	  svgImage.setAttribute('height', node.size.y * self.zoomFactor);  
+	  svgImage.setAttribute('width', node.size.x * self.zoomFactor);  
       
       $svg.css({
-        "position" : "relative",
-        "left" : self.zoomFactor * left,
-	    "top" : self.zoomFactor * top,   
+        "position" : "absolute",
+        "left" : self.zoomFactor * node.left,
+	    "top" : self.zoomFactor * node.top,   
       });
       
       // Reajustamos el tamaño del div
       if($text){
 		  $node.css({  
-			  height: $text.height(),
+			  // height: $text.height(),
 			  // width: $text.width(),  
 		  });
       }   
@@ -222,21 +228,21 @@ mindmaps.DefaultCanvasView = function() {
     $drawingArea.addClass("mindmap");
 
     // setup delegates
-    $drawingArea.delegate("div.node-caption", "mousedown", function(e) {
+    $drawingArea.delegate("span.node-caption", "mousedown", function(e) {
       var node = $(this).parent().data("node");
       if (self.nodeMouseDown) {
         self.nodeMouseDown(node);
       }
     });
 
-    $drawingArea.delegate("div.node-caption", "mouseup", function(e) {
+    $drawingArea.delegate("span.node-caption", "mouseup", function(e) {
       var node = $(this).parent().data("node");
       if (self.nodeMouseUp) {
         self.nodeMouseUp(node);
       }
     });
 
-    $drawingArea.delegate("div.node-caption", "dblclick", function(e) {
+    $drawingArea.delegate("span.node-caption", "dblclick", function(e) {
       var node = $(this).parent().data("node");
       if (self.nodeDoubleClicked) {
         self.nodeDoubleClicked(node);
@@ -265,9 +271,11 @@ mindmaps.DefaultCanvasView = function() {
 
     // mouse wheel listener
     this.$getContainer().bind("mousewheel", function(e, delta) {
+      
       if (self.mouseWheeled) {
         self.mouseWheeled(delta);
       }
+      
     });
   };
 
@@ -318,7 +326,13 @@ mindmaps.DefaultCanvasView = function() {
     } else {
       self.createNode(root, $drawingArea);
     }
-
+	
+	root.forEachChild(function(child) {
+		child.forEachChild(function(child2) {
+			self.hideNode(child2);
+		});
+    });
+    
     console.debug("draw map ms: ", new Date().getTime() - now);
   };
 
@@ -342,7 +356,7 @@ mindmaps.DefaultCanvasView = function() {
     var offsetY = node.offset.y;
 	
 	if(depth){
-		node.text.font.size = 120/Math.pow(3, depth);
+		node.text.font.size = 60/Math.pow(3, depth);
 	}
 	
     // div node container
@@ -390,14 +404,10 @@ mindmaps.DefaultCanvasView = function() {
 		      },
 		      drag : function(e, ui) {
 		        // reposition and draw canvas while dragging
-		        var sizeX = node.size.x;
-		        var sizeY = node.size.y;
-		        var left = node.left;
-		        var top = node.top;
 		        var $svg = $getNodeSvg(node);
 		        var $svgImage = $getNodeSvgImage(node);
 			
-		        drawImageSvg($node, $svg, $svgImage, null, sizeX, sizeY, left, top);
+		        drawImageSvg(node);
 
 		        // fire dragging event
 		        if (self.nodeDragging) {
@@ -428,7 +438,7 @@ mindmaps.DefaultCanvasView = function() {
 	
 	// text caption
 	var font = node.text.font;
-    var $text = $("<div/>", {
+    var $text = $("<span/>", {
       id : "node-caption-" + node.id,
       "class" : "node-caption node-text-behaviour",
       text : node.text.caption
@@ -463,45 +473,24 @@ mindmaps.DefaultCanvasView = function() {
       this.createFoldButton(parent);
     }
 
-    if (!node.isRoot()) {
-      // toggle visibility
-      if (parent.foldChildren) {
-        $node.hide();
-      } else {
-        $node.show();
-      }
-    }
-
     if (node.isRoot()) {
       $node.children().andSelf().addClass("root");
       $text.hide();  
     }
     
-    if(node.size.x == ''){
-    	if(depth == 1){
-    		node.size.x = 2 * $text.outerWidth();
-    		node.left = -$text.outerWidth()/6;
-    	}
-    	else{
-	    	node.size.x = $text.outerWidth();
-    	}
-    }
-    
-    if(node.size.y == ''){
-    	if(depth == 1){
-    		node.size.y = 2 * $text.outerWidth();
-    		node.top = - 1.2*$text.outerWidth();
-    	}
-    	else if(depth < 4){
-    		node.size.y = $text.outerWidth();
-    		node.top = - 0.6*$text.outerWidth();
-    	}
-    	else{
-    		node.size.y = $text.outerHeight();
-    		node.top = - 2*$text.outerHeight()/3;
-    	}
-    }
-	
+	if(depth < 2){
+		node.size.x = 1.5 * $text.outerWidth();
+		node.size.y = 1.5 * $text.outerWidth();
+		node.left = - 0.1 * node.size.x;
+		node.top = - node.size.y/2.5;
+	}
+	else{
+		node.size.x = $text.outerWidth();
+		node.size.y = $text.outerWidth();
+		node.left = 0;
+		node.top = - node.size.y/2;
+	}
+
 	// draw svg for the root	
 	var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
 	svg.setAttribute('id', 'node-svg-' + node.id);
@@ -519,27 +508,43 @@ mindmaps.DefaultCanvasView = function() {
 	svgimg.setAttribute('width', this.zoomFactor * node.size.x);
 	svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', 'http://www.artifica.com/img/' + node.image);
 
-	svg.appendChild(svgimg);      
+	svg.appendChild(svgimg);   
 	$node.append(svg);   
 
 	// Reajustamos la posición del svg
 	$("#node-svg-" + node.id).css({
-	  "position" : "relative",
+	  "position" : "absolute",
 	  left : this.zoomFactor * node.left,
-	  top : this.zoomFactor * node.top,     
+	  top : this.zoomFactor * node.top, 
+	  "pointer-events": "none",    
 	});
     
     // Reajustamos el tamaño del div
     $node.css({
-    	height: $text.height(),
+    	//height: $text.height(),
     	// width: $text.width(),
     });
-    
+	
     // draw child nodes
     node.forEachChild(function(child) {
       self.createNode(child, $node, depth + 1);
     });
   };
+
+  /**
+   * Hide a node from the view and with it all its children and the branch
+   * leading to the parent.
+   * 
+   * @param {mindmaps.Node} node
+   */
+  this.hideNode = function (node) {
+  	var $node = $getNode(node);
+    $node.hide();
+    
+    node.forEachChild(function(child) {
+      self.hideNode(child);
+    });
+  }
 
   /**
    * Removes a node from the view and with it all its children and the branch
@@ -738,17 +743,7 @@ mindmaps.DefaultCanvasView = function() {
    * @param {String} optional color
    */
   function drawNodeCanvas(node, color) {
-    var sizeX = node.size.x;  
-    var sizeY = node.size.y;
-    var left = node.left;
-    var top = node.top;
-	
-    var $node = $getNode(node);
-    var $svg = $getNodeSvg(node);
-    var $svgImage = $getNodeSvgImage(node);
-	var $text = $getNodeCaption(node);
-	
-	drawImageSvg($node, $svg, $svgImage, $text, sizeX, sizeY, left, top);
+	  drawImageSvg(node);
   }
 
   /**
@@ -866,6 +861,10 @@ mindmaps.DefaultCanvasView = function() {
     root.forEachChild(function(child) {
       scale(child, 1);
     });
+    
+    root.forEachChild(function(child) {
+      hideZoom(child, 1);
+    });
 
     function scale(node, depth) {
       var $node = $getNode(node);
@@ -889,13 +888,28 @@ mindmaps.DefaultCanvasView = function() {
 
       // redraw canvas to parent
       drawNodeCanvas(node);
-
+	  
       // redraw all child canvases
       if (!node.isLeaf()) {
         node.forEachChild(function(child) {
           scale(child, depth + 1);
         });
       }
+    };
+    
+    function hideZoom(node, depth){
+    	var $node = $getNode(node);
+	  	
+	  	if(depth > zoomFactor){
+			$node.hide();
+		}
+		else{
+			$node.show();
+		}
+		
+		node.forEachChild(function(child) {
+		  hideZoom(child, depth + 1);
+		});
     }
   };
 

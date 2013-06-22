@@ -76,8 +76,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    * @ignore
    */
   view.mouseWheeled = function(delta) {
-    view.stopEditNodeCaption();
-
+    //view.stopEditNodeCaption();
     if (delta > 0) {
       zoomController.zoomIn();
     } else {

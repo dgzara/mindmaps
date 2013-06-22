@@ -20,8 +20,6 @@ mindmaps.Node = function() {
   };
   this.size = new mindmaps.Point();
   this.offset = new mindmaps.Point();
-  this.left = 0;
-  this.top = 0;
   this.foldChildren = false;
   this.branchColor = "#000000";
   this.image = '';
@@ -48,8 +46,6 @@ mindmaps.Node.prototype.clone = function() {
   clone.text = text;
   clone.size = this.size.clone();
   clone.offset = this.offset.clone();
-  clone.left = this.left;
-  clone.top = this.top;
   clone.foldChildren = this.foldChildren;
   clone.branchColor = this.branchColor;
   clone.image = this.image;
@@ -84,8 +80,6 @@ mindmaps.Node.fromObject = function(obj) {
   node.text = obj.text;
   node.offset = mindmaps.Point.fromObject(obj.offset);
   node.size = mindmaps.Point.fromObject(obj.size);
-  node.left = obj.left;
-  node.top = obj.top;
   node.foldChildren = obj.foldChildren;
   node.branchColor = obj.branchColor;
   node.image = obj.image;
@@ -125,8 +119,6 @@ mindmaps.Node.prototype.toJSON = function() {
     text : this.text,
     offset : this.offset,
     size : this.size,
-    left : this.left,
-    top : this.top,
     foldChildren : this.foldChildren,
     branchColor : this.branchColor,
     image: this.image,
