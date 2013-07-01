@@ -15,7 +15,7 @@ mindmaps.ZoomController = function(eventBus, commandRegistry) {
   /**
    * @constant
    */
-  this.MAX_ZOOM = 6;
+  this.MAX_ZOOM = 15;
 
   /**
    * @constant
@@ -75,7 +75,40 @@ mindmaps.ZoomController = function(eventBus, commandRegistry) {
 
     return this.zoomFactor;
   };
+ 
+ 
+  /**
+   * Zooms in by cantZoom.
+   * 
+   * @returns {Number} the new zoomFactor.
+   */
+  this.zoomMouseIn = function(cantZoom) {
+    this.zoomFactor += this.ZOOM_STEP * cantZoom;
+    
+    if (this.zoomFactor > this.MAX_ZOOM) {
+      this.zoomFactor = this.MAX_ZOOM;
+    } 
+    
+    eventBus.publish(mindmaps.Event.ZOOM_CHANGED, this.zoomFactor);
+    return this.zoomFactor;
+  };
 
+  /**
+   * Zooms out by cantZoom,
+   * 
+   * @returns {Number} the new zoomFactor.
+   */
+  this.zoomMouseOut = function(cantZoom) {
+    this.zoomFactor -= this.ZOOM_STEP * cantZoom;
+    
+    if (this.zoomFactor < this.MIN_ZOOM) {
+      this.zoomFactor = this.MIN_ZOOM;
+    } 
+    
+    eventBus.publish(mindmaps.Event.ZOOM_CHANGED, this.zoomFactor);
+    return this.zoomFactor;
+  };
+  
   /**
    * Reset zoom factor when document was closed.
    * 

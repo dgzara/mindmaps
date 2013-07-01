@@ -2,8 +2,7 @@
  Text Metrics and Node behaviour
 */
 .node-text-behaviour {
-  white-space: pre-wrap;
-  word-wrap: break-word;
+  white-space: nowrap;
   font-family: 'MyriadPro-Semibold', sans-serif;
   text-transform: uppercase;
 }

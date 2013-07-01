@@ -135,6 +135,7 @@ mindmaps.DefaultCanvasView = function() {
   var nodeDragging = false;
   var creator = new Creator(this);
   var captionEditor = new CaptionEditor(this);
+  var cantZoom = 0;
   captionEditor.commit = function(node, text) {
     if (self.nodeCaptionEditCommitted) {
       self.nodeCaptionEditCommitted(node, text);
@@ -186,12 +187,12 @@ mindmaps.DefaultCanvasView = function() {
   }
 
   function drawImageSvg(node) {
-	  
-    var $node = $getNode(node);
-    var $svg = $getNodeSvg(node);
-    var $svgImage = $getNodeSvgImage(node);
-	var $text = $getNodeCaption(node);
+	
 	var depth = node.getDepth();
+	  var $node = $getNode(node);
+	  var $svg = $getNodeSvg(node);
+	  var $svgImage = $getNodeSvgImage(node);
+	  var $text = $getNodeCaption(node);
     
 	  // draw svg if node is not a root
 	  var svg = $svg[0];
@@ -217,7 +218,7 @@ mindmaps.DefaultCanvasView = function() {
 			  // height: $text.height(),
 			  // width: $text.width(),  
 		  });
-      }   
+      } 
   }
 
   this.init = function() {
@@ -228,21 +229,21 @@ mindmaps.DefaultCanvasView = function() {
     $drawingArea.addClass("mindmap");
 
     // setup delegates
-    $drawingArea.delegate("span.node-caption", "mousedown", function(e) {
+    $drawingArea.delegate("div.node-caption", "mousedown", function(e) {
       var node = $(this).parent().data("node");
       if (self.nodeMouseDown) {
         self.nodeMouseDown(node);
       }
     });
 
-    $drawingArea.delegate("span.node-caption", "mouseup", function(e) {
+    $drawingArea.delegate("div.node-caption", "mouseup", function(e) {
       var node = $(this).parent().data("node");
       if (self.nodeMouseUp) {
         self.nodeMouseUp(node);
       }
     });
 
-    $drawingArea.delegate("span.node-caption", "dblclick", function(e) {
+    $drawingArea.delegate("div.node-caption", "dblclick", function(e) {
       var node = $(this).parent().data("node");
       if (self.nodeDoubleClicked) {
         self.nodeDoubleClicked(node);
@@ -271,11 +272,13 @@ mindmaps.DefaultCanvasView = function() {
 
     // mouse wheel listener
     this.$getContainer().bind("mousewheel", function(e, delta) {
-      
-      if (self.mouseWheeled) {
-        self.mouseWheeled(delta);
-      }
-      
+      cantZoom++;
+	  clearTimeout($.data(this, 'timer'));
+	  $.data(this, 'timer', setTimeout(function() {
+		//alert("Haven't scrolled in 250ms!, cantZoom: "+cantZoom);
+        self.mouseWheeled(delta, cantZoom);
+		cantZoom = 0;
+ 	  }, 100));
     });
   };
 
@@ -355,8 +358,17 @@ mindmaps.DefaultCanvasView = function() {
     var offsetX = node.offset.x;
     var offsetY = node.offset.y;
 	
-	if(depth){
-		node.text.font.size = 60/Math.pow(3, depth);
+	if(depth == 1){
+		node.text.font.size = 25;
+	}
+	else if(depth == 2){
+		node.text.font.size = 5;
+	}
+	else if(depth == 3){
+		node.text.font.size = 2;
+	}
+	else if(depth >= 4){
+		node.text.font.size = 0.8;
 	}
 	
     // div node container
@@ -368,6 +380,7 @@ mindmaps.DefaultCanvasView = function() {
     }).css({
       "font-size" : node.text.font.size,
     });
+    
     $node.appendTo($parent);
 
     if (node.isRoot()) {
@@ -436,20 +449,26 @@ mindmaps.DefaultCanvasView = function() {
 		node.text.font.size = parent.text.font.size;
 	}
 	
+	var caption = node.text.caption;
+	
 	// text caption
 	var font = node.text.font;
-    var $text = $("<span/>", {
+    var $text = $("<div/>", {
       id : "node-caption-" + node.id,
       "class" : "node-caption node-text-behaviour",
-      text : node.text.caption
+      text : caption
     }).css({
       "color" : font.color,
       "font-size" : this.zoomFactor * 100 + "%",
       "font-weight" : font.weight,
       "font-style" : font.style,
       "text-decoration" : font.decoration,
-      "word-wrap": "break-word"
     }).appendTo($node);
+    
+    // Agregamos salto de línea si es necesario
+    if(caption.length > 10){
+		$text.html(caption.replace(' ', '<br>'));
+	}
 
 	if(depth != 1){
     	var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
@@ -475,20 +494,39 @@ mindmaps.DefaultCanvasView = function() {
 
     if (node.isRoot()) {
       $node.children().andSelf().addClass("root");
-      $text.hide();  
+      $text.hide();
+      node.left = -300;
+	  node.top = -60; 
     }
-    
-	if(depth < 2){
-		node.size.x = 1.5 * $text.outerWidth();
-		node.size.y = 1.5 * $text.outerWidth();
-		node.left = - 0.1 * node.size.x;
-		node.top = - node.size.y/2.5;
-	}
-	else{
-		node.size.x = $text.outerWidth();
-		node.size.y = $text.outerWidth();
-		node.left = 0;
-		node.top = - node.size.y/2;
+    else{
+		if(depth < 2){
+			node.size.x = 1.2*$text.outerWidth();
+			node.size.y = 1.2*$text.outerWidth();
+			node.left = -0.1*node.size.x;
+			node.top = - node.size.y/2 + $text.innerHeight() * 0.6;
+		}
+		else if (depth == 2){
+			node.size.x = $text.outerWidth();
+			node.size.y = $text.outerWidth();
+			node.left = -0.1*$text.outerWidth();
+			node.top = - node.size.y/2 + $text.innerHeight() * 0.4;
+		}
+		else if (depth == 3){
+			node.size.x = $text.outerWidth() * 0.9;
+			node.size.y = $text.outerWidth() * 0.9;
+			node.left = - $text.outerWidth() * 0.1;
+			node.top = - node.size.y/2 + $text.innerHeight() * 0.2;
+		}
+		else if (depth > 3){
+			node.size.x = $text.outerWidth()*0.4;
+			node.size.y = $text.outerWidth()*0.4;
+			node.left = 0;
+			node.top = - node.size.y/2 + $text.innerHeight() * 0.1;
+			
+			if(node.image == 'video.svg'){
+				node.left = - $text.outerWidth()*0.15;
+			}
+		}
 	}
 
 	// draw svg for the root	
@@ -510,7 +548,7 @@ mindmaps.DefaultCanvasView = function() {
 
 	svg.appendChild(svgimg);   
 	$node.append(svg);   
-
+	
 	// Reajustamos la posición del svg
 	$("#node-svg-" + node.id).css({
 	  "position" : "absolute",
@@ -518,7 +556,7 @@ mindmaps.DefaultCanvasView = function() {
 	  top : this.zoomFactor * node.top, 
 	  "pointer-events": "none",    
 	});
-    
+
     // Reajustamos el tamaño del div
     $node.css({
     	//height: $text.height(),
@@ -841,7 +879,7 @@ mindmaps.DefaultCanvasView = function() {
     var zoomFactor = this.zoomFactor;
     var $root = this.$getDrawingArea().children().first();
     var root = $root.data("node");
-
+	
     var w = this.getLineWidth(0);
     //$root.css("border-bottom-width", w);
 
@@ -857,11 +895,16 @@ mindmaps.DefaultCanvasView = function() {
 	
 	// change root's size
     drawNodeCanvas(root);
-        
+      
+    var start = new Date().getTime();  
     root.forEachChild(function(child) {
       scale(child, 1);
     });
-    
+    var end = new Date().getTime();
+	
+	var time = end - start;
+	console.debug('Execution time: ' + time);
+	
     root.forEachChild(function(child) {
       hideZoom(child, 1);
     });
@@ -898,19 +941,29 @@ mindmaps.DefaultCanvasView = function() {
     };
     
     function hideZoom(node, depth){
-    	var $node = $getNode(node);
 	  	
-	  	if(depth > zoomFactor){
-			$node.hide();
+	  	if(3*depth > zoomFactor){
+			self.closeNode(node);
 		}
 		else{
-			$node.show();
+			self.openNode(node);
 		}
 		
 		node.forEachChild(function(child) {
 		  hideZoom(child, depth + 1);
 		});
     }
+    
+    function isScrolledIntoView(elem){
+    	var docViewTop = $(window).scrollTop();
+		var docViewBottom = docViewTop + $(window).height();
+
+		var elemTop = $(elem).offset().top;
+		var elemBottom = elemTop + $(elem).height();
+
+		return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom)
+		  && (elemBottom <= docViewBottom) &&  (elemTop >= docViewTop) );
+	}
   };
 
   /**
@@ -974,7 +1027,7 @@ mindmaps.DefaultCanvasView = function() {
       this.node = node;
       attached = true;
 
-      // TODO put text into span and hide()
+      // TODO put text into div and hide()
       this.$text = $getNodeCaption(node);
       this.$cancelArea = $cancelArea;
 

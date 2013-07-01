@@ -75,12 +75,12 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    * 
    * @ignore
    */
-  view.mouseWheeled = function(delta) {
+  view.mouseWheeled = function(delta, cantZoom) {
     //view.stopEditNodeCaption();
     if (delta > 0) {
-      zoomController.zoomIn();
+      zoomController.zoomMouseIn(cantZoom);
     } else {
-      zoomController.zoomOut();
+      zoomController.zoomMouseOut(cantZoom);
     }
   };
 
@@ -185,7 +185,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    */
   creator.dragStopped = function(parent, offsetX, offsetY, distance) {
     // disregard if the creator was only dragged a bit
-    if (distance < 50) {
+    if (distance < 2) {
       return;
     }
 
