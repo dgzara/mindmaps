@@ -275,7 +275,6 @@ mindmaps.DefaultCanvasView = function() {
       cantZoom++;
 	  clearTimeout($.data(this, 'timer'));
 	  $.data(this, 'timer', setTimeout(function() {
-		//alert("Haven't scrolled in 250ms!, cantZoom: "+cantZoom);
         self.mouseWheeled(delta, cantZoom);
 		cantZoom = 0;
  	  }, 100));
@@ -367,8 +366,11 @@ mindmaps.DefaultCanvasView = function() {
 	else if(depth == 3){
 		node.text.font.size = 2;
 	}
-	else if(depth >= 4){
+	else if(depth == 4){
 		node.text.font.size = 0.8;
+	}
+	else if(depth > 4){
+		node.text.font.size = 0.6;
 	}
 	
     // div node container
@@ -450,12 +452,21 @@ mindmaps.DefaultCanvasView = function() {
 	}
 	
 	var caption = node.text.caption;
+	var classes = "node-caption node-text-behaviour";
+	
+	if(edicion){
+		classes += " dragging";
+	}
+	
+	if(node.image == 'video.svg' || node.image == 'link.svg'){
+		classes += " medio";
+	}
 	
 	// text caption
 	var font = node.text.font;
     var $text = $("<div/>", {
       id : "node-caption-" + node.id,
-      "class" : "node-caption node-text-behaviour",
+      "class" : classes,
       text : caption
     }).css({
       "color" : font.color,
@@ -466,8 +477,19 @@ mindmaps.DefaultCanvasView = function() {
     }).appendTo($node);
     
     // Agregamos salto de línea si es necesario
-    if(caption.length > 10){
-		$text.html(caption.replace(' ', '<br>'));
+    var n = caption.split(" "); 
+    
+    if(n.length == 2){
+    	$text.html(caption.replace(/ /g, '<br>'));
+    }
+    else if(n.length == 3){
+    	$text.html(n[0]+" "+n[1]+"<br>"+n[2]);
+    }
+    else if(n.length == 4){
+    	$text.html(n[0]+" "+n[1]+"<br>"+n[2]+" "+n[3]);
+    }
+    else{
+		$text.html(caption.replace(/ /g, '<br>'));
 	}
 
 	if(depth != 1){
@@ -523,8 +545,11 @@ mindmaps.DefaultCanvasView = function() {
 			node.left = 0;
 			node.top = - node.size.y/2 + $text.innerHeight() * 0.1;
 			
-			if(node.image == 'video.svg'){
-				node.left = - $text.outerWidth()*0.15;
+			if(node.image == 'video.svg' || node.image == 'link.svg'){
+				node.size.x = $text.outerWidth()*0.1;
+			    node.size.y = $text.outerWidth()*0.1;
+				node.left = -1.5;
+				node.top = 0.2;
 			}
 		}
 	}

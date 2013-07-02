@@ -130,7 +130,13 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    * @ignore
    */
   view.nodeDoubleClicked = function(node) {
-	   view.openNodeWindow(node, view);
+	   
+	   if(node.url){
+	   	window.open(node.url,'_blank');
+	   }
+	   else{
+	   	view.openNodeWindow(node, view);
+	   }
        mindmapModel.openWindowNode(node);
     // view.editNodeCaption(node);
   };

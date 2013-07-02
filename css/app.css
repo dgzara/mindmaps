@@ -213,16 +213,23 @@ html,body {
 }
 
 .mindmap .node-caption {
+  cursor: pointer;
   position: relative;
-  cursor: move;
   z-index: 100;
   padding: 4px;
   text-align: center;
 }
 
 .mindmap .node-caption:hover {
-  /*border: 2px dotted #DDD;*/
-  /*padding: 2px;*/
+  color: #fff !important;
+}
+
+.mindmap .dragging {
+  cursor: move;
+}
+
+.mindmap .medio:hover {
+  color: #000 !important;
 }
 
 .mindmap .node-caption.selected {
