@@ -407,7 +407,7 @@ mindmaps.DefaultCanvasView = function() {
        * Only attach the drag handler once we mouse over it. this speeds
        * up loading of big maps.
        */
-      if(edicion == true){
+      if(edicion){
       	$node.one("mouseenter", function() {
 		    $node.draggable({
 		      // could be set
