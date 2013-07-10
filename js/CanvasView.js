@@ -478,19 +478,22 @@ mindmaps.DefaultCanvasView = function() {
     
     // Agregamos salto de línea si es necesario
     var n = caption.split(" "); 
+    var text = '';
     
     if(n.length == 2){
     	$text.html(caption.replace(/ /g, '<br>'));
     }
-    else if(n.length == 3){
-    	$text.html(n[0]+" "+n[1]+"<br>"+n[2]);
-    }
-    else if(n.length == 4){
-    	$text.html(n[0]+" "+n[1]+"<br>"+n[2]+" "+n[3]);
-    }
     else{
-		$text.html(caption.replace(/ /g, '<br>'));
-	}
+		for(var i=0; i < n.length; i++){
+			if(i%2 == 0){
+				text += n[i] + " ";
+			}
+			else{
+				text += n[i] + "<br>";
+			}  
+		}
+		$text.html(text);
+    }
 
 	if(depth != 1){
     	var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
@@ -520,6 +523,21 @@ mindmaps.DefaultCanvasView = function() {
       node.left = -300;
 	  node.top = -60; 
     }
+    else if(node.image == 'video.svg' || node.image == 'link.svg')
+    {
+		if(depth < 3){
+			node.size.x = $text.outerWidth()*0.2;
+			node.size.y = $text.outerWidth()*0.2;
+			node.left = -$text.outerWidth()*0.25;
+			node.top = 0.2;
+		}
+		else{
+			node.size.x = $text.outerWidth()*0.1;
+			node.size.y = $text.outerWidth()*0.1;
+			node.left = -1.5;
+			node.top = 0.2;
+		}
+    }
     else{
 		if(depth < 2){
 			node.size.x = 1.2*$text.outerWidth();
@@ -544,13 +562,6 @@ mindmaps.DefaultCanvasView = function() {
 			node.size.y = $text.outerWidth()*0.4;
 			node.left = 0;
 			node.top = - node.size.y/2 + $text.innerHeight() * 0.1;
-			
-			if(node.image == 'video.svg' || node.image == 'link.svg'){
-				node.size.x = $text.outerWidth()*0.1;
-			    node.size.y = $text.outerWidth()*0.1;
-				node.left = -1.5;
-				node.top = 0.2;
-			}
 		}
 	}
 

@@ -118,13 +118,15 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
   view.nodeMouseDown = function(node) {
     mindmapModel.selectNode(node);
     
-    if(node.url && !edicion){
-	   	window.open(node.url,'_blank');
-	}
-    else{
-	  	view.openNodeWindow(node, view);
+    if(!edicion){
+    	if(node.url){
+	   		window.open(node.url,'_blank');
+		}
+		else{
+		  	view.openNodeWindow(node, view);
+		}
+    	mindmapModel.openWindowNode(node);
     }
-    mindmapModel.openWindowNode(node);
        
     // show creator
     //creator.attachToNode(node);
@@ -139,7 +141,12 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    * @ignore
    */
   view.nodeDoubleClicked = function(node) {
-	   
+	
+	if(edicion)
+	{   
+	   view.openNodeWindow(node, view);
+	   mindmapModel.openWindowNode(node);
+	}
     // view.editNodeCaption(node);
   };
 
