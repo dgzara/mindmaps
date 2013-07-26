@@ -223,6 +223,17 @@ ul.tabs li a {
     margin: 25px !important;
 }
 
+.texto {
+	line-height: 150%;
+    font-family: Georgia, "Times New Roman", Times, serif; 
+    color:#555;
+    font-size: 0.8em !important;
+    font-weight: normal;
+    text-align: center;
+    font-style: italic;
+    margin: 25px !important;
+}
+
 #boton_volver{
     float: left;
     display: inline;
