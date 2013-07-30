@@ -252,7 +252,7 @@ mindmaps.TextMetrics = (function() {
     visibility : "hidden",
     height : "auto",
     width : "auto"
-  }).prependTo($("body"));
+  });
 
   return {
     /**
@@ -301,14 +301,7 @@ mindmaps.TextMetrics = (function() {
         "font-weight" : font.weight
       }).text(text);
 
-      // add some safety pixels for firefox, otherwise it doesnt render
-      // right on textareas
-      var w = $div.width() + 2;
-      var h = $div.height() + 2;
-
       return {
-        "max-width": w,
-        "max-height" : h
       };
     }
   };

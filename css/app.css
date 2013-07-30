@@ -220,10 +220,6 @@ html,body {
   text-align: center;
 }
 
-.mindmap .node-caption:hover {
-  color: #fff !important;
-}
-
 .mindmap .dragging {
   cursor: move;
 }

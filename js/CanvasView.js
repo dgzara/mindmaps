@@ -52,26 +52,60 @@ mindmaps.CanvasView = function() {
    * Changes the size of the drawing area to match with with the new zoom
    * factor and scrolls the container to adjust the view port.
    */
-  this.applyViewZoom = function() {
+  this.applyViewZoom = function(pageX, pageY) {
     var delta = this.zoomFactorDelta;
     // console.log(delta);
-
+    
     var c = this.$getContainer();
-    var sl = c.scrollLeft();
-    var st = c.scrollTop();
+    var sl = c.scrollLeft(); // Obtiene la posición del scroll X relativo al tamaño actual del mapa (Va hacia la derecha)
+    var st = c.scrollTop(); // Obtiene la posición del scroll Y relativo al tamaño actual del mapa (va hacia abajo)
 
-    var cw = c.width();
-    var ch = c.height();
-    var cx = cw / 2 + sl;
-    var cy = ch / 2 + st;
-
+    var cw = c.width(); // Obtiene el ancho actual de la pantalla
+    var ch = c.height(); // Obtiene la altura actual de la pantalla 
+    
+    // Como regla general
+    // cw + sl = ancho real del mapa (con el zoom aplicado)
+    // ch + st = altura real del mapa (con el zoom aplicado)
+	var cx = sl; 
+	var cy = st; 
+	
+	if(pageX){
+		// Se posiciona donde el puntero del mouse indica
+		cx += pageX;
+	}
+	else{
+		// Se posiciona horizontalmente en la mitad de la pantalla
+		cx += cw/2;
+	}
+	
+	if(pageY){
+		// Se posiciona donde el puntero del mouse indica
+		cy += pageY;
+	}
+	else{
+		// Se posiciona verticalmente en la mitad de la pantalla
+		cy += ch/2;
+	}
+    
+	// Aplicamos zoom	
     cx *= this.zoomFactorDelta;
     cy *= this.zoomFactorDelta;
 
-    sl = cx - cw / 2;
-    st = cy - ch / 2;
-    // console.log(sl, st);
-
+	// Recalculamos la posición de los scrollers
+    sl = cx - pageX;
+    st = cy - pageY;
+    
+    if(pageX)
+    	sl = cx - pageX;
+	else
+		sl = cx - cw/2;
+    
+    if(pageY)
+    	st = cy - pageY;
+	else
+		st = cy - ch/2;
+    
+    // Dibujamos el mapa
     var drawingArea = this.$getDrawingArea();
     var width = drawingArea.width();
     var height = drawingArea.height();
@@ -275,7 +309,7 @@ mindmaps.DefaultCanvasView = function() {
       cantZoom++;
 	  clearTimeout($.data(this, 'timer'));
 	  $.data(this, 'timer', setTimeout(function() {
-        self.mouseWheeled(delta, cantZoom);
+        self.mouseWheeled(delta, cantZoom, e.pageX, e.pageY);
 		cantZoom = 0;
  	  }, 100));
     });
@@ -458,7 +492,7 @@ mindmaps.DefaultCanvasView = function() {
 		classes += " dragging";
 	}
 	
-	if(node.image == 'video.svg' || node.image == 'link.svg'){
+	if(node.medio){
 		classes += " medio";
 	}
 	

@@ -75,12 +75,12 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    * 
    * @ignore
    */
-  view.mouseWheeled = function(delta, cantZoom) {
+  view.mouseWheeled = function(delta, cantZoom, pageX, pageY) {
     //view.stopEditNodeCaption();
     if (delta > 0) {
-      zoomController.zoomMouseIn(cantZoom);
+      zoomController.zoomMouseIn(cantZoom, pageX, pageY);
     } else {
-      zoomController.zoomMouseOut(cantZoom);
+      zoomController.zoomMouseOut(cantZoom, pageX, pageY);
     }
   };
 
@@ -122,7 +122,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
     	if(node.url){
 	   		window.open(node.url,'_blank');
 		}
-		else{
+		else if(node.medio){
 		  	view.openNodeWindow(node, view);
 		}
     	mindmapModel.openWindowNode(node);
@@ -354,9 +354,9 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
       view.updateBranchColor(node, color)
     });
 
-    eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {
+    eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor, pageX, pageY) {
       view.setZoomFactor(zoomFactor);
-      view.applyViewZoom();
+      view.applyViewZoom(pageX, pageY);
       view.scaleMap();
     });
   }
