@@ -614,7 +614,7 @@ mindmaps.DefaultCanvasView = function() {
 	svgimg.setAttribute('y','0');
 	svgimg.setAttribute('height', this.zoomFactor * node.size.y);  
 	svgimg.setAttribute('width', this.zoomFactor * node.size.x);
-	svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', 'http://www.artifica.com/img/' + node.image);
+	svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', node.image);
 
 	svg.appendChild(svgimg);   
 	$node.append(svg);   

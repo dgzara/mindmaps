@@ -24,7 +24,7 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 
     // start tutorial after a short delay
     eventBus.once(mindmaps.Event.DOCUMENT_OPENED, function() {
-      setTimeout(start, 1000);
+      //setTimeout(start, 1000);
     });
 
     function closeAllNotifications() {
