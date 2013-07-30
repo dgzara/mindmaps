@@ -557,7 +557,7 @@ mindmaps.DefaultCanvasView = function() {
       node.left = -300;
 	  node.top = -60; 
     }
-    else if(node.image == 'video.svg' || node.image == 'link.svg')
+    else if(node.medio)
     {
 		if(depth < 3){
 			node.size.x = $text.outerWidth()*0.2;
