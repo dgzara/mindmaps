@@ -30,26 +30,6 @@
 var mindmaps = mindmaps || {};
 mindmaps.VERSION = "0.7.2";
 
-
-// experimental app cache invalidator. from:
-// http://www.html5rocks.com/en/tutorials/appcache/beginner/#toc-updating-cache/
-// Check if a new cache is available on page load.
-window.addEventListener('load', function(e) {
-  window.applicationCache.addEventListener('updateready', function(e) {
-    if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
-      // Browser downloaded a new app cache.
-      window.applicationCache.swapCache();
-      window.onbeforeunload = null;
-      if (confirm('A new version of the app is available. Load it?')) {
-        window.location.reload();
-      }
-    } else {
-      // Manifest didn't changed. Nothing new to server.
-    }
-  }, false);
-
-}, false)
-
 /**
  * Start up. This function is executed when the DOM is loaded.
  */
@@ -62,10 +42,6 @@ $(function() {
 
   setupConsole();
   trackErrors();
-
-  if (!mindmaps.DEBUG) {
-    addUnloadHook();
-  }
 
   // create a new app controller and go
   var appController = new mindmaps.ApplicationController();
@@ -91,25 +67,6 @@ function removeEventLayerXY() {
   }
   $.event.props = res;
 }
-
-/**
-* Adds a confirmation dialog when the user navigates away from the app.
-*/
-function addUnloadHook () {
-  window.onbeforeunload = function (e) {
-    var msg = "Are you sure? Any unsaved progress will be lost."
-    e = e || window.event;
-
-    // For IE and Firefox prior to version 4
-    if (e) {
-      e.returnValue = msg;
-    }
-
-    // For Safari
-    return msg;
-  };
-}
-
 
 function trackErrors() {
   window.onerror = function(msg, url, line) {

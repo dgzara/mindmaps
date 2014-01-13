@@ -306,12 +306,9 @@ mindmaps.DefaultCanvasView = function() {
 
     // mouse wheel listener
     this.$getContainer().bind("mousewheel", function(e, delta) {
-      cantZoom++;
-	  clearTimeout($.data(this, 'timer'));
-	  $.data(this, 'timer', setTimeout(function() {
-        self.mouseWheeled(delta, cantZoom, e.pageX, e.pageY);
-		cantZoom = 0;
- 	  }, 100));
+ 	  if (self.mouseWheeled) {
+        self.mouseWheeled(delta, e.pageX, e.pageY);
+      }
     });
   };
 
@@ -623,8 +620,7 @@ mindmaps.DefaultCanvasView = function() {
 	$("#node-svg-" + node.id).css({
 	  "position" : "absolute",
 	  left : this.zoomFactor * node.left,
-	  top : this.zoomFactor * node.top, 
-	  "pointer-events": "none",    
+	  top : this.zoomFactor * node.top 
 	});
 
     // Reajustamos el tamaño del div

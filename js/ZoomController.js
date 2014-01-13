@@ -10,12 +10,12 @@ mindmaps.ZoomController = function(eventBus, commandRegistry) {
   /**
    * @constant
    */
-  this.ZOOM_STEP = 1;
+  this.ZOOM_STEP = 0.5;
 
   /**
    * @constant
    */
-  this.MAX_ZOOM = 15;
+  this.MAX_ZOOM = 30;
 
   /**
    * @constant
@@ -82,8 +82,8 @@ mindmaps.ZoomController = function(eventBus, commandRegistry) {
    * 
    * @returns {Number} the new zoomFactor.
    */
-  this.zoomMouseIn = function(cantZoom, pageX, pageY) {
-    this.zoomFactor += this.ZOOM_STEP * cantZoom;
+  this.zoomMouseIn = function(pageX, pageY) {
+    this.zoomFactor += this.ZOOM_STEP;
     
     if (this.zoomFactor > this.MAX_ZOOM) {
       this.zoomFactor = this.MAX_ZOOM;
@@ -98,8 +98,8 @@ mindmaps.ZoomController = function(eventBus, commandRegistry) {
    * 
    * @returns {Number} the new zoomFactor.
    */
-  this.zoomMouseOut = function(cantZoom, pageX, pageY) {
-    this.zoomFactor -= this.ZOOM_STEP * cantZoom;
+  this.zoomMouseOut = function(pageX, pageY) {
+    this.zoomFactor -= this.ZOOM_STEP;
     
     if (this.zoomFactor < this.MIN_ZOOM) {
       this.zoomFactor = this.MIN_ZOOM;

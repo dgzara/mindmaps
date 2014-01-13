@@ -75,12 +75,12 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    * 
    * @ignore
    */
-  view.mouseWheeled = function(delta, cantZoom, pageX, pageY) {
+  view.mouseWheeled = function(delta, pageX, pageY) {
     //view.stopEditNodeCaption();
     if (delta > 0) {
-      zoomController.zoomMouseIn(cantZoom, pageX, pageY);
+      zoomController.zoomMouseIn(pageX, pageY);
     } else {
-      zoomController.zoomMouseOut(cantZoom, pageX, pageY);
+      zoomController.zoomMouseOut(pageX, pageY);
     }
   };
 
@@ -126,6 +126,8 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		  	view.openNodeWindow(node, view);
 		}
     	mindmapModel.openWindowNode(node);
+    	
+    	toggleFold(node);
     }
        
     // show creator

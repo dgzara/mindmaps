@@ -88,7 +88,7 @@ mindmaps.NavigatorView = function() {
     $("#navi-slider", $content).slider({
       // TODO remove magic numbers. get values from presenter
       min : 0,
-      max : 14,    
+      max : 58,    
       step : 1,
       value : 1,
       slide : function(e, ui) {
