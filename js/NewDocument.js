@@ -18,7 +18,7 @@ mindmaps.NewDocumentView = function() {
 mindmaps.NewDocumentPresenter = function(eventBus, mindmapModel, view) {
 
   this.go = function() {
-	if(hipermedio){
+	if(hipermedio.length > 0){
         var doc = mindmaps.Document.fromJSON(hipermedio); 
         mindmapModel.setDocument(doc);    
     }

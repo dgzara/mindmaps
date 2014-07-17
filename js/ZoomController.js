@@ -10,17 +10,17 @@ mindmaps.ZoomController = function(eventBus, commandRegistry) {
   /**
    * @constant
    */
-  this.ZOOM_STEP = 0.5;
+  this.ZOOM_STEP = 0.25;
 
   /**
    * @constant
    */
-  this.MAX_ZOOM = 30;
+  this.MAX_ZOOM = 3;
 
   /**
    * @constant
    */
-  this.MIN_ZOOM = 1;
+  this.MIN_ZOOM = 0.25;
 
   /**
    * @constant
@@ -75,40 +75,7 @@ mindmaps.ZoomController = function(eventBus, commandRegistry) {
 
     return this.zoomFactor;
   };
- 
- 
-  /**
-   * Zooms in by cantZoom.
-   * 
-   * @returns {Number} the new zoomFactor.
-   */
-  this.zoomMouseIn = function(pageX, pageY) {
-    this.zoomFactor += this.ZOOM_STEP;
-    
-    if (this.zoomFactor > this.MAX_ZOOM) {
-      this.zoomFactor = this.MAX_ZOOM;
-    } 
-    
-    eventBus.publish(mindmaps.Event.ZOOM_CHANGED, this.zoomFactor, pageX, pageY);
-    return this.zoomFactor;
-  };
 
-  /**
-   * Zooms out by cantZoom,
-   * 
-   * @returns {Number} the new zoomFactor.
-   */
-  this.zoomMouseOut = function(pageX, pageY) {
-    this.zoomFactor -= this.ZOOM_STEP;
-    
-    if (this.zoomFactor < this.MIN_ZOOM) {
-      this.zoomFactor = this.MIN_ZOOM;
-    } 
-    
-    eventBus.publish(mindmaps.Event.ZOOM_CHANGED, this.zoomFactor, pageX, pageY);
-    return this.zoomFactor;
-  };
-  
   /**
    * Reset zoom factor when document was closed.
    * 
@@ -118,3 +85,4 @@ mindmaps.ZoomController = function(eventBus, commandRegistry) {
     self.zoomTo(self.DEFAULT_ZOOM);
   });
 };
+

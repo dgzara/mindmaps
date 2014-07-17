@@ -21,7 +21,6 @@ html,body {
   height: 100%; /* needed for container min-height */
   font-family: sans-serif;
   font-size: 10px; /*conform with jquery-ui em settings */
-  background-color: yellow;
 }
 
 #container {
@@ -187,8 +186,7 @@ html,body {
 
 #drawing-area {
   position: absolute;
-  background-color: yellow;
-  /*background-image: url("../img/grid.gif");
+  background-image: url("../img/grid.gif");
   background-size: 24px 24px;
   /* need this for webkit as well. */
   image-rendering: -moz-crisp-edges;

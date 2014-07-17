@@ -204,14 +204,6 @@ mindmaps.DefaultCanvasView = function() {
     return $("#node-canvas-" + node.id);
   }
   
-  function $getNodeSvg(node) {
-    return $("#node-svg-" + node.id);
-  }
-  
-  function $getNodeSvgImage(node) {
-    return $("#node-svg-image-" + node.id);  
-  }
-  
   function $getNode(node) {
     return $("#node-" + node.id);
   }
@@ -219,42 +211,16 @@ mindmaps.DefaultCanvasView = function() {
   function $getNodeCaption(node) {
     return $("#node-caption-" + node.id);
   }
-
-  function drawImageSvg(node) {
-	
-	var depth = node.getDepth();
-	  var $node = $getNode(node);
-	  var $svg = $getNodeSvg(node);
-	  var $svgImage = $getNodeSvgImage(node);
-	  var $text = $getNodeCaption(node);
     
-	  // draw svg if node is not a root
-	  var svg = $svg[0];
-	  svg.setAttribute('height', node.size.y * self.zoomFactor);    
-	  svg.setAttribute('width', node.size.x * self.zoomFactor);
-      
-      // Generate the image
-      var svgImage = $svgImage[0];  
-	  svgImage.setAttribute('x','0');    
-	  svgImage.setAttribute('y','0');
-	  svgImage.setAttribute('height', node.size.y * self.zoomFactor);  
-	  svgImage.setAttribute('width', node.size.x * self.zoomFactor);  
-      
-      $svg.css({
-        "position" : "absolute",
-        "left" : self.zoomFactor * node.left,
-	    "top" : self.zoomFactor * node.top,   
-      });
-      
-      // Reajustamos el tamaño del div
-      if($text){
-		  $node.css({  
-			  // height: $text.height(),
-			  // width: $text.width(),  
-		  });
-      } 
-  }
+  function drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent, color) {
+    var canvas = $canvas[0];
+    var ctx = canvas.getContext("2d");
 
+    // set $canvas for beforeDraw() callback.
+    branchDrawer.$canvas = $canvas;
+    branchDrawer.render(ctx, depth, offsetX, offsetY, $node, $parent, color, self.zoomFactor);
+  }
+  
   this.init = function() {
     makeDraggable();
     this.center();
@@ -369,7 +335,7 @@ mindmaps.DefaultCanvasView = function() {
     console.debug("draw map ms: ", new Date().getTime() - now);
   };
 
-  /**
+   /**
    * Inserts a new node including all of its children into the DOM.
    * 
    * @param {mindmaps.Node} node - The model of the node.
@@ -387,23 +353,7 @@ mindmaps.DefaultCanvasView = function() {
     var depth = depth || node.getDepth();
     var offsetX = node.offset.x;
     var offsetY = node.offset.y;
-	
-	if(depth == 1){
-		node.text.font.size = 25;
-	}
-	else if(depth == 2){
-		node.text.font.size = 5;
-	}
-	else if(depth == 3){
-		node.text.font.size = 2;
-	}
-	else if(depth == 4){
-		node.text.font.size = 0.8;
-	}
-	else if(depth > 4){
-		node.text.font.size = 0.6;
-	}
-	
+
     // div node container
     var $node = $("<div/>", {
       id : "node-" + node.id,
@@ -411,14 +361,13 @@ mindmaps.DefaultCanvasView = function() {
     }).data({
       node : node
     }).css({
-      "font-size" : node.text.font.size,
+      "font-size" : node.text.font.size
     });
-    
     $node.appendTo($parent);
 
     if (node.isRoot()) {
-      //var w = this.getLineWidth(depth);
-      //$node.css("border-bottom-width", w);
+      var w = this.getLineWidth(depth);
+      $node.css("border-bottom-width", w);
     }
 
     if (!node.isRoot()) {
@@ -430,7 +379,7 @@ mindmaps.DefaultCanvasView = function() {
       $node.css({
         left : this.zoomFactor * offsetX,
         top : this.zoomFactor * offsetY,
-        //"border-bottom" : bb
+        "border-bottom" : bb
       });
 
       // node drag behaviour
@@ -438,108 +387,61 @@ mindmaps.DefaultCanvasView = function() {
        * Only attach the drag handler once we mouse over it. this speeds
        * up loading of big maps.
        */
-      if(edicion){
-      	$node.one("mouseenter", function() {
-		    $node.draggable({
-		      // could be set
-		      // revert: true,
-		      // revertDuration: 0,
-		      handle : "div.node-caption:first",
-		      start : function() {
-		        nodeDragging = true;
-		      },
-		      drag : function(e, ui) {
-		        // reposition and draw canvas while dragging
-		        var $svg = $getNodeSvg(node);
-		        var $svgImage = $getNodeSvgImage(node);
-			
-		        drawImageSvg(node);
+      $node.one("mouseenter", function() {
+        $node.draggable({
+          // could be set
+          // revert: true,
+          // revertDuration: 0,
+          handle : "div.node-caption:first",
+          start : function() {
+            nodeDragging = true;
+          },
+          drag : function(e, ui) {
+            // reposition and draw canvas while dragging
+            var offsetX = ui.position.left / self.zoomFactor;
+            var offsetY = ui.position.top / self.zoomFactor;
+            var color = node.branchColor;
+            var $canvas = $getNodeCanvas(node);
 
-		        // fire dragging event
-		        if (self.nodeDragging) {
-		          self.nodeDragging();
-		        }
-		      },
-		      stop : function(e, ui) {
-		        nodeDragging = false;
-		        var pos = new mindmaps.Point(ui.position.left
-		            / self.zoomFactor, ui.position.top
-		            / self.zoomFactor);
+            drawLineCanvas($canvas, depth, offsetX, offsetY, $node,
+                $parent, color);
 
-		        // fire dragged event
-		        if (self.nodeDragged) {
-		          self.nodeDragged(node, pos);
-		        }
-		      }
-		    });
-		  }); 
-      } 
+            // fire dragging event
+            if (self.nodeDragging) {
+              self.nodeDragging();
+            }
+          },
+          stop : function(e, ui) {
+            nodeDragging = false;
+            var pos = new mindmaps.Point(ui.position.left
+                / self.zoomFactor, ui.position.top
+                / self.zoomFactor);
+
+            // fire dragged event
+            if (self.nodeDragged) {
+              self.nodeDragged(node, pos);
+            }
+          }
+        });
+      });
     }
-    
-	// Definimos el color de los nodos
-	if(parent && !parent.isRoot()){
-		node.text.font.color = parent.text.font.color;
-		node.text.font.size = parent.text.font.size;
-	}
-	
-	var caption = node.text.caption;
-	var classes = "node-caption node-text-behaviour";
-	
-	if(edicion){
-		classes += " dragging";
-	}
-	
-	if(node.medio){
-		classes += " medio";
-	}
-	
-	// text caption
-	var font = node.text.font;
+
+    // text caption
+    var font = node.text.font;
     var $text = $("<div/>", {
       id : "node-caption-" + node.id,
-      "class" : classes,
-      text : caption
+      "class" : "node-caption node-text-behaviour",
+      text : node.text.caption
     }).css({
       "color" : font.color,
       "font-size" : this.zoomFactor * 100 + "%",
       "font-weight" : font.weight,
       "font-style" : font.style,
-      "text-decoration" : font.decoration,
+      "text-decoration" : font.decoration
     }).appendTo($node);
-    
-    // Agregamos salto de línea si es necesario
-    var n = caption.split(" "); 
-    var text = '';
-    
-    if(n.length == 2){
-    	$text.html(caption.replace(/ /g, '<br>'));
-    }
-    else{
-		for(var i=0; i < n.length; i++){
-			if(i%2 == 0){
-				text += n[i] + " ";
-			}
-			else{
-				text += n[i] + "<br>";
-			}  
-		}
-		$text.html(text);
-    }
 
-	if(depth != 1){
-    	var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
-    	$text.css(metrics);
-    }
-    else{
-    	$text.css({
-    		"text-align": "left",
-    	});
-    }
-
-	// Delete botton
-    if(!node.isRoot() && edicion){
-        //this.createDeleteButton(node);
-    }
+    var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
+    $text.css(metrics);
 
     // create fold button for parent if he hasn't one already
     var parentAlreadyHasFoldButton = $parent.data("foldButton");
@@ -548,87 +450,30 @@ mindmaps.DefaultCanvasView = function() {
       this.createFoldButton(parent);
     }
 
+    if (!node.isRoot()) {
+      // toggle visibility
+      if (parent.foldChildren) {
+        $node.hide();
+      } else {
+        $node.show();
+      }
+
+      // draw canvas to parent if node is not a root
+      var $canvas = $("<canvas/>", {
+        id : "node-canvas-" + node.id,
+        "class" : "line-canvas"
+      });
+
+      // position and draw connection
+      drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent,
+          node.branchColor);
+      $canvas.appendTo($node);
+    }
+
     if (node.isRoot()) {
       $node.children().andSelf().addClass("root");
-      $text.hide();
-      node.left = -300;
-	  node.top = -60; 
     }
-    else if(node.medio)
-    {
-		if(depth < 3){
-			node.size.x = $text.outerWidth()*0.2;
-			node.size.y = $text.outerWidth()*0.2;
-			node.left = -$text.outerWidth()*0.25;
-			node.top = 0.2;
-		}
-		else{
-			node.size.x = $text.outerWidth()*0.1;
-			node.size.y = $text.outerWidth()*0.1;
-			node.left = -1.5;
-			node.top = 0.2;
-		}
-    }
-    else{
-		if(depth < 2){
-			node.size.x = 1.2*$text.outerWidth();
-			node.size.y = 1.2*$text.outerWidth();
-			node.left = -0.1*node.size.x;
-			node.top = - node.size.y/2 + $text.innerHeight() * 0.6;
-		}
-		else if (depth == 2){
-			node.size.x = $text.outerWidth();
-			node.size.y = $text.outerWidth();
-			node.left = -0.1*$text.outerWidth();
-			node.top = - node.size.y/2 + $text.innerHeight() * 0.4;
-		}
-		else if (depth == 3){
-			node.size.x = $text.outerWidth() * 0.9;
-			node.size.y = $text.outerWidth() * 0.9;
-			node.left = - $text.outerWidth() * 0.1;
-			node.top = - node.size.y/2 + $text.innerHeight() * 0.2;
-		}
-		else if (depth > 3){
-			node.size.x = $text.outerWidth()*0.4;
-			node.size.y = $text.outerWidth()*0.4;
-			node.left = 0;
-			node.top = - node.size.y/2 + $text.innerHeight() * 0.1;
-		}
-	}
 
-	// draw svg for the root	
-	var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-	svg.setAttribute('id', 'node-svg-' + node.id);
-	svg.setAttribute('height', this.zoomFactor * node.size.y);  
-	svg.setAttribute('width', this.zoomFactor * node.size.x);
-	svg.setAttribute('xmlns','http://www.w3.org/2000/svg');  
-	svg.setAttribute('xmlns:xlink','http://www.w3.org/1999/xlink');
-
-	// Generate the image
-	var svgimg = document.createElementNS('http://www.w3.org/2000/svg','image');
-	svgimg.setAttribute('id', 'node-svg-image-' + node.id);  
-	svgimg.setAttribute('x','0');  
-	svgimg.setAttribute('y','0');
-	svgimg.setAttribute('height', this.zoomFactor * node.size.y);  
-	svgimg.setAttribute('width', this.zoomFactor * node.size.x);
-	svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', node.image);
-
-	svg.appendChild(svgimg);   
-	$node.append(svg);   
-	
-	// Reajustamos la posición del svg
-	$("#node-svg-" + node.id).css({
-	  "position" : "absolute",
-	  left : this.zoomFactor * node.left,
-	  top : this.zoomFactor * node.top 
-	});
-
-    // Reajustamos el tamaño del div
-    $node.css({
-    	//height: $text.height(),
-    	// width: $text.width(),
-    });
-	
     // draw child nodes
     node.forEachChild(function(child) {
       self.createNode(child, $node, depth + 1);
@@ -724,35 +569,32 @@ mindmaps.DefaultCanvasView = function() {
         padre_id = node.parent.id;
     }
     
-    // Seteamos el dialog en la ventana
-    var $test = $("#template-open").tmpl().appendTo("#ventana");
-
-    // Creamos el elemento
-    var dialog = new Dialog(self, node);
-    $("#open-dialog").html('<div id="nodo"></div><img id="loader_nodo" src="/bundles/artificamapa/img/ajax-loader.gif" style="vertical-align: middle; display: none" alt ="loading"/>');
-    $("#open-dialog").ready(function(){
-        dialog.open();
-    });
-    
-    // Cargamos el nodo
-    $('#loader_nodo').show();  
-    $('#nodo').hide();
-    $("#nodo").load(
-        $('#form_nodo').attr('action'),
-        {
+    $.ajax({
+	    url: Routing.generate('nodo_new_modal', { uuid: node.id }),
+	    data: {
             nodo_id: node.id,
             nodo_padre_id: padre_id,
             nodo_x: node.offset.x,
             nodo_y: node.offset.y,
-            nodo_color: node.text.font.color,
             edicion: edicion,
         },
-        function() {
-            $('#loader_nodo').hide();
-            $('#nodo').show();
-            dialog.newPosition();
-        }
-    );
+	    type: "POST",
+	    beforeSend: function(){
+	        var div = '<div class="modal-body"><span class="loader"></span></div>';
+			$('#myModal').empty();
+			$('#myModal').append(div);
+			$('#myModal').modal();
+		},
+	    success: function(data){
+	        $('#myModal').empty();
+	        $('#myModal').append(data);
+	    },
+	    error: function(jqXHR, textStatus, errorThrown){
+			$('#myModal').empty();
+			$('#myModal').append(jqXHR.responseText);
+			$('#myModal').modal();
+	    }
+	});
   };
 
   /**
@@ -847,7 +689,17 @@ mindmaps.DefaultCanvasView = function() {
    * @param {String} optional color
    */
   function drawNodeCanvas(node, color) {
-	  drawImageSvg(node);
+    var parent = node.getParent();
+    var depth = node.getDepth();
+    var offsetX = node.offset.x;
+    var offsetY = node.offset.y;
+    color = color || node.branchColor;
+
+    var $node = $getNode(node);
+    var $parent = $getNode(parent);
+    var $canvas = $getNodeCanvas(node);
+
+    drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent, color);
   }
 
   /**
@@ -1190,6 +1042,14 @@ mindmaps.DefaultCanvasView = function() {
         }
       },
       drag : function(e, ui) {
+        // update creator canvas
+        var offsetX = ui.position.left / view.zoomFactor;
+        var offsetY = ui.position.top / view.zoomFactor;
+
+        // set depth+1 because we are drawing the canvas for the child
+        var $node = $getNode(self.node);
+        drawLineCanvas($canvas, self.depth + 1, offsetX, offsetY,
+            $fakeNode, $node, self.lineColor);
       },
       stop : function(e, ui) {
         dragging = false;
@@ -1237,7 +1097,7 @@ mindmaps.DefaultCanvasView = function() {
       // set border on our fake node for correct line drawing
       this.depth = node.getDepth();
       var w = view.getLineWidth(this.depth + 1);
-      //$fakeNode.css("border-bottom-width", w);
+      $fakeNode.css("border-bottom-width", w);
 
       var $node = $getNode(node);
       $wrapper.appendTo($node);

@@ -20,10 +20,6 @@ mindmaps.StaticCanvasRenderer = function() {
     "class" : "map"
   });
   
-  if($.browser.msie && parseFloat($.browser.version)<8){
-  	G_vmlCanvasManager.initElement($canvas[0]);
-  }
-  
   var ctx = $canvas[0].getContext("2d");
 
   var branchDrawer = new mindmaps.CanvasBranchDrawer();

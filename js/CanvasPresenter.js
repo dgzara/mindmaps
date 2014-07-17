@@ -202,7 +202,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
    */
   creator.dragStopped = function(parent, offsetX, offsetY, distance) {
     // disregard if the creator was only dragged a bit
-    if (distance < 2) {
+    if (distance < 50) {
       return;
     }
 
@@ -211,7 +211,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
     node.branchColor = creator.lineColor;
     node.offset = new mindmaps.Point(offsetX, offsetY);
     // indicate that we want to set this nodes caption after creation
-    node.shouldEditCaption = false;
+    node.shouldEditCaption = true;
 
     mindmapModel.createNode(node, parent);
   };
@@ -234,10 +234,6 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
     view.stopEditNodeCaption();
     mindmapModel.changeNodeCaption(node, str);
   };
-
-  view.nodeCloseWindow = function(node){
-  	mindmapModel.closeWindowNode(node);
-  }
 
   this.go = function() {
     view.init();
