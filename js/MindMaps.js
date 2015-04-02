@@ -35,7 +35,7 @@ mindmaps.VERSION = "0.7.2";
  */
 $(function() {
   removeEventLayerXY();
-
+  
   // take car of old browsers
   createECMA5Shims();
   createHTML5Shims();

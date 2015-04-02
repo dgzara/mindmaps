@@ -7,15 +7,14 @@ function cargarNodo(id){
     $('#nodo').hide();
     $('#loader_nodo').show();
     $('#nodo').load(
-        $('#form_nodo').attr('action'),
-        {
+        $('#form_nodo').attr('action'),{
             nodo_id: id
         },
         function() {
             $('#loader_nodo').hide();
             $('#nodo').show();
         }
-        );
+    );
 }
 
 function cargarNodo(id, edita){

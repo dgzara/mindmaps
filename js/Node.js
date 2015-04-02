@@ -78,7 +78,10 @@ mindmaps.Node.fromJSON = function(json) {
  */
 mindmaps.Node.fromObject = function(obj) {
   var node = new mindmaps.Node();
-  node.id = obj.id;
+  if(obj.id != null)
+    node.id = obj.id;
+  else
+    node.id = mindmaps.Util.getId();
   node.text = obj.text;
   node.offset = mindmaps.Point.fromObject(obj.offset);
   node.url = obj.url;
